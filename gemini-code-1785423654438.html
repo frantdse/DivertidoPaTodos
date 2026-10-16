@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DirectoPE | Televisión Terrestre del Perú en Vivo</title>
+    
+    <!-- Design System: Tailwind, Google Fonts & FontAwesome -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Montserrat:wght@700;800;900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- JW Player CDN -->
+    <script src="https://content.jwplatform.com/libraries/IDzF9Zmk.js"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { 
+                        display: ['Syne', 'sans-serif'],
+                        montserrat: ['Montserrat', 'sans-serif'],
+                        poppins: ['Poppins', 'sans-serif']
+                    },
+                    colors: {
+                        directo: { red: '#E11D48', dark: '#0F172A' }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { background-color: #F8FAFC; color: #0F172A; font-family: 'Poppins', sans-serif; transition: background-color 0.3s, color 0.3s; }
+        .dark body { background-color: #090D16; color: #F8FAFC; }
+        .glass-header { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); border-bottom: 1px solid #E2E8F0; }
+        .dark .glass-header { background: rgba(15, 23, 42, 0.95); border-bottom: 1px solid #1E293B; }
+        .dark .card-bg { background-color: #0F172A; border-color: #1E293B; }
+        .shadow-card { box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05); }
+        .active-channel { border-color: #E11D48 !important; background-color: #FFF1F2 !important; }
+        .dark .active-channel { background-color: #881337 !important; border-color: #E11D48 !important; }
+
+        @keyframes ticker {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+        .ticker-wrap { overflow: hidden; white-space: nowrap; }
+        .ticker-move { display: inline-block; animation: ticker 30s linear infinite; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-rose-500 selection:text-white">
+
+    <!-- Cintillo Mejorado -->
+    <div class="bg-directo-red text-white text-xs font-semibold py-2 px-4 overflow-hidden flex items-center shadow-inner">
+        <span class="bg-black/30 font-montserrat font-bold px-2 py-0.5 rounded uppercase tracking-wider text-[10px] shrink-0 mr-3 z-10 flex items-center gap-1">
+            <i class="fa-solid fa-broadcast-tower text-emerald-400"></i> TRANSMISIÓN NACIONAL
+        </span>
+        <div class="ticker-wrap w-full">
+            <div class="ticker-move">
+                <span>¡Bienvenidos a DirectoPE! Disfruta de la señal oficial de la televisión terrestre peruana en alta definición. • Utiliza las teclas de dirección ⬆ y ⬇ para navegar rápidamente entre los canales disponibles • ¡Nueva función de captura de fotogramas y grabación local de clips integrada! 🇵🇪📺</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header Principal -->
+    <header class="sticky top-0 z-50 glass-header">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-3 cursor-pointer" onclick="sintonizarCanal(0)">
+                <div class="bg-directo-red text-white p-2.5 rounded-2xl shadow-md shadow-rose-200 dark:shadow-none">
+                    <i class="fa-solid fa-tv text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="font-display font-extrabold text-3xl tracking-tight text-slate-900 dark:text-white leading-none">
+                        Directo<span class="text-directo-red">PE</span>
+                    </h1>
+                    <span class="block text-[10px] font-bold text-slate-400 tracking-widest uppercase mt-1">Televisión Digital Terrestre Perú</span>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <button onclick="sintonizarAleatorio()" title="Canal al Azar" class="flex items-center gap-2 bg-gradient-to-r from-rose-500 to-rose-600 hover:from-rose-600 hover:to-rose-700 text-white font-montserrat font-bold text-xs px-3.5 py-2 rounded-xl shadow-sm transition active:scale-95">
+                    <i class="fa-solid fa-dice text-sm"></i>
+                    <span class="hidden sm:inline">Zap al Azar</span>
+                </button>
+
+                <button onclick="toggleDarkMode()" title="Cambiar Tema" class="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700 transition">
+                    <i id="theme-icon" class="fa-solid fa-moon text-sm"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-6 py-8 w-full flex-grow grid grid-cols-1 lg:grid-cols-12 gap-8 transition-all duration-300" id="main-container">
+        
+        <!-- Columna Izquierda: JW Player + EPG + Trivia (8 Cols) -->
+        <div id="player-container" class="lg:col-span-8 space-y-6 flex flex-col">
+            <div class="bg-white dark:bg-slate-900 card-bg rounded-3xl p-4 border border-slate-200 dark:border-slate-800 shadow-card">
+                
+                <div class="flex flex-wrap items-center justify-between gap-3 mb-3 px-2">
+                    <div class="flex items-center gap-3">
+                        <img id="current-logo" src="" alt="Logo" class="h-9 w-12 object-contain bg-slate-50 dark:bg-slate-800 p-1 rounded-lg border dark:border-slate-700">
+                        <div>
+                            <h2 id="current-title" class="font-display font-bold text-slate-900 dark:text-white text-lg leading-tight">Willax TV</h2>
+                            <span id="current-category" class="text-[11px] text-slate-400 font-medium">Noticias</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button id="fav-btn" onclick="toggleFavoritoActual()" class="px-3 py-1 bg-slate-100 dark:bg-slate-800 hover:bg-amber-100 text-amber-500 font-medium text-xs rounded-full border border-slate-200 dark:border-slate-700 transition flex items-center gap-1.5">
+                            <i class="fa-regular fa-star"></i> <span>Favorito</span>
+                        </button>
+                        <span class="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[11px] font-bold px-3 py-1 rounded-full uppercase tracking-wider flex items-center gap-1.5">
+                            <i class="fa-solid fa-circle text-[6px] text-emerald-500 animate-pulse"></i> EN VIVO
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Contenedor JW Player + Indicador de Grabación Activa -->
+                <div id="video-wrapper" class="aspect-video relative rounded-2xl overflow-hidden bg-black shadow-inner group">
+                    <div id="jw-player-element" class="w-full h-full"></div>
+                    <!-- Overlay indicador de grabación -->
+                    <div id="rec-indicator" class="absolute top-4 left-4 bg-red-600/90 text-white font-mono text-[10px] font-bold px-2.5 py-1 rounded-lg hidden items-center gap-1.5 backdrop-blur-md animate-pulse z-20">
+                        <i class="fa-solid fa-circle text-[6px] text-white"></i> REC <span id="rec-timer">00:00</span>
+                    </div>
+                </div>
+
+                <!-- Barra EPG Integrada -->
+                <div class="mt-4 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 rounded-2xl p-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                    <div class="flex items-start gap-3 w-full sm:w-auto">
+                        <div class="bg-rose-500/10 text-directo-red dark:text-rose-400 p-2 rounded-xl shrink-0 mt-0.5 sm:mt-0">
+                            <i class="fa-solid fa-clapperboard text-sm"></i>
+                        </div>
+                        <div class="space-y-0.5">
+                            <div class="flex items-center gap-2">
+                                <span class="text-[10px] font-bold uppercase tracking-wider text-rose-500 bg-rose-500/10 px-1.5 py-0.5 rounded">Al Aire Ahora</span>
+                                <span id="epg-time-now" class="text-[11px] font-mono text-slate-400">--:--</span>
+                                <span id="epg-id-badge" class="text-[9px] font-mono bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 px-1.5 py-0.5 rounded">EPG ID: --</span>
+                            </div>
+                            <h4 id="epg-current-show" class="text-xs font-bold text-slate-800 dark:text-slate-100">Sin info</h4>
+                        </div>
+                    </div>
+                    <div class="w-full sm:w-auto border-t sm:border-t-0 sm:border-l border-slate-200 dark:border-slate-700 pt-2 sm:pt-0 sm:pl-4">
+                        <span class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">A continuación</span>
+                        <p id="epg-next-show" class="text-xs font-medium text-slate-600 dark:text-slate-300 italic">Sin info</p>
+                    </div>
+                </div>
+
+                <!-- Barra de Herramientas Avanzadas (Incluye Captura y Grabación) -->
+                <div class="mt-4 flex flex-wrap items-center justify-between gap-3 px-2 text-xs">
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <button onclick="toggleTeatro()" class="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-medium rounded-xl transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-expand"></i> <span id="theater-text">Modo Cine</span>
+                        </button>
+                        <!-- NUEVOS BOTONES DE CAPTURA Y GRABACIÓN -->
+                        <button onclick="capturarFotoCanal()" title="Capturar fotograma actual como imagen" class="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 hover:text-emerald-600 font-medium rounded-xl transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-camera"></i> <span>Captura PNG</span>
+                        </button>
+                        <button id="rec-btn" onclick="toggleGrabarClip()" title="Grabar clip de video corto" class="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-rose-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 hover:text-rose-600 font-medium rounded-xl transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-circle text-rose-500 text-[8px]"></i> <span id="rec-btn-text">Grabar Clip</span>
+                        </button>
+                    </div>
+
+                    <div id="dynamic-reactions" class="flex items-center gap-2 bg-slate-50 dark:bg-slate-800/60 p-1.5 rounded-2xl border border-slate-200/80 dark:border-slate-700/60">
+                        <!-- Reacciones dinámicas -->
+                    </div>
+
+                    <div class="flex items-center gap-4">
+                        <span id="current-id" class="font-mono text-slate-400 text-[11px]">ID: Willax.pe</span>
+                        <a id="current-web" href="https://willax.pe" target="_blank" class="text-directo-red font-semibold hover:underline flex items-center gap-1">
+                            <span>Web Oficial</span> <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fila Simple: Trivia -->
+            <div class="grid grid-cols-1 gap-6">
+                <div class="bg-gradient-to-r from-slate-900 to-slate-800 text-white rounded-3xl p-6 border border-slate-700 shadow-card flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center gap-2">
+                                <span class="bg-rose-500 text-white p-1.5 rounded-lg text-xs"><i class="fa-solid fa-gamepad"></i></span>
+                                <h3 class="font-montserrat font-bold text-xs uppercase tracking-wider text-rose-400">Trivia DirectoPE</h3>
+                            </div>
+                            <span class="text-xs text-slate-400 font-mono">Puntos: <span id="trivia-score" class="font-bold text-amber-400">0</span></span>
+                        </div>
+                        <p id="trivia-question" class="text-xs font-semibold text-slate-200 mb-3">Cargando pregunta...</p>
+                        <div id="trivia-options" class="grid grid-cols-1 gap-2 text-xs mb-3"></div>
+                    </div>
+                    <div id="trivia-feedback" class="text-xs font-bold hidden pt-1"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Columna Derecha: Grilla de Canales (4 Cols) -->
+        <div id="sidebar-container" class="lg:col-span-4 flex flex-col gap-6">
+            <div class="bg-white dark:bg-slate-900 card-bg rounded-3xl p-5 border border-slate-200 dark:border-slate-800 shadow-card flex flex-col h-[520px]">
+                <div class="pb-3 border-b border-slate-100 dark:border-slate-800 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h3 class="font-display font-bold text-slate-900 dark:text-white text-base">Grilla de Canales</h3>
+                        <span class="text-[10px] bg-slate-100 dark:bg-slate-800 font-semibold text-slate-500 dark:text-slate-400 px-2 py-0.5 rounded-md">Atajo ⬆ ⬇</span>
+                    </div>
+
+                    <div class="relative">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                        <input type="text" id="search-input" oninput="filtrarCanales()" placeholder="Buscar canal..." class="w-full bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-xs font-medium pl-9 pr-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none focus:border-rose-500 transition">
+                    </div>
+
+                    <div class="flex items-center gap-1 overflow-x-auto pb-1 text-[11px]">
+                        <button onclick="filtrarCategoria('all')" class="cat-btn bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 font-medium px-2 py-0.5 rounded-lg transition shrink-0">Todos</button>
+                        <button onclick="filtrarCategoria('favs')" class="cat-btn bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-amber-500 font-medium px-2 py-0.5 rounded-lg transition shrink-0 flex items-center gap-1"><i class="fa-solid fa-star text-[9px]"></i> Favs</button>
+                        <button onclick="filtrarCategoria('Noticias')" class="cat-btn bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 font-medium px-2 py-0.5 rounded-lg transition shrink-0">Noticias</button>
+                        <button onclick="filtrarCategoria('Entretenimiento')" class="cat-btn bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 font-medium px-2 py-0.5 rounded-lg transition shrink-0">General</button>
+                        <button onclick="filtrarCategoria('Educativo')" class="cat-btn bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 font-medium px-2 py-0.5 rounded-lg transition shrink-0">Educación</button>
+                    </div>
+                </div>
+
+                <div id="channels-list" class="space-y-2 overflow-y-auto pr-1 mt-3 flex-grow"></div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 py-6 text-xs text-slate-500 dark:text-slate-400">
+        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-2">
+                <span class="font-display font-black text-slate-900 dark:text-white text-sm">Directo<span class="text-directo-red">PE</span></span>
+                <span>© 2026</span>
+            </div>
+            <span class="font-mono text-[11px] text-slate-400">EPG Provider: impeditor.com/epg/capanueve/capanueve • JW Player Engine + Clip Recorder</span>
+        </div>
+    </footer>
+
+    <!-- Scripts con Parser EPG, JW Player y Funciones de Grabación / Captura -->
+    <script>
+        const canales = [
+            { 
+                id: "Willax.pe", name: "Willax Televisión HD (1.1)", category: "Noticias", 
+                logo: "https://upload.wikimedia.org/wikipedia/en/1/17/Willax_TV_logo.png", 
+                stream: "http://bantel-cdn1.iptvperu.tv:1935/btnscrtn/willax.stream/playlist.m3u8", 
+                web: "https://willax.pe",
+                emojis: [{id:'news', icon:'📰', count:34}, {id:'fire', icon:'🔥', count:19}, {id:'peru', icon:'🇵🇪', count:52}],
+                guia: "Programas políticos, entrevistas estelares y debate nacional.",
+                epgId: "N/A"
+            },
+            { 
+                id: "Latina.pe", name: "Latina Televisión HD (2.1)", category: "Entretenimiento", 
+                logo: "https://i.postimg.cc/DwDxzzwZ/Latina-PE2024.png", 
+                stream: "https://redirector.rudo.video/hls-video/567ffde3fa319fadf3419efda25619456231dfea/latina/latina.smil/playlist.m3u8", 
+                web: "https://latina.pe",
+                emojis: [{id:'laugh', icon:'😂', count:45}, {id:'heart', icon:'❤️', count:30}, {id:'tv', icon:'📺', count:18}],
+                guia: "Magacines matutinos, telerrealidad y entretenimiento familiar.",
+                epgId: "0910"
+            },
+            { 
+                id: "RPP.pe", name: "RPP Noticias (3.1)", category: "Noticias", 
+                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Radio_Programas_del_Per%C3%BA_logo.svg/3840px-Radio_Programas_del_Per%C3%BA_logo.svg.png", 
+                stream: "https://redirector.rudo.video/hls-video/567ffde3fa319fadf3419efda25619456231dfea/rpptv/rpptv.smil/playlist.m3u8", 
+                web: "https://rpp.pe",
+                emojis: [{id:'mic', icon:'🎙️', count:61}, {id:'alert', icon:'🚨', count:25}, {id:'peru', icon:'🇵🇪', count:40}],
+                guia: "Información en tiempo real, enlaces en vivo y actualidad política.",
+                epgId: "N/A"
+            },
+            { 
+                id: "AmericaTV.pe", name: "América Televisión HD (4.1)", category: "Entretenimiento", 
+                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Am%C3%A9rica_HD.svg/3840px-Am%C3%A9rica_HD.svg.png", 
+                stream: "http://187.102.210.46/AMERICA/index.m3u8", 
+                web: "https://americatv.com.pe",
+                emojis: [{id:'heart', icon:'💖', count:88}, {id:'clap', icon:'👏', count:44}, {id:'fire', icon:'🔥', count:31}],
+                guia: "Telenovelas estelares, realities de competencia y magazines.",
+                epgId: "0955"
+            },
+            { 
+                id: "Panamericana.pe", name: "Panamericana TV HD (5.1)", category: "Entretenimiento", 
+                logo: "https://i.postimg.cc/NjYVx0XX/Logo-Panamericana-2020.png", 
+                stream: "http://bantel-cdn1.iptvperu.tv:1935/btnscrtn/panamericana.stream/playlist.m3u8", 
+                web: "https://panamericana.pe",
+                emojis: [{id:'classic', icon:'⭐', count:29}, {id:'laugh', icon:'😂', count:33}, {id:'peru', icon:'🇵🇪', count:19}],
+                guia: "Magacines sabatinos, humor y archivo histórico de la televisión.",
+                epgId: "N/A"
+            },
+            { 
+                id: "AsiriTV.pe", name: "Asiri TV (6.1)", category: "Entretenimiento", 
+                logo: "https://i.postimg.cc/441skj1h/ace0d5d352e9-640-360.png", 
+                stream: "https://video2.lhdserver.es/asiritv/live.m3u8", 
+                web: "https://asiritv.pe",
+                emojis: [{id:'smile', icon:'😊', count:15}, {id:'music', icon:'🎵', count:22}, {id:'thumb', icon:'👍', count:12}],
+                guia: "Cultura, entretenimiento alternativo y música nacional.",
+                epgId: "N/A"
+            },
+            { 
+                id: "TVPeru.pe", name: "TV Perú HD (7.1)", category: "Noticias", 
+                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Tv_Per%C3%BA_-_Logo_2019_Reducido_%28TVPE%29.svg/3840px-Tv_Per%C3%BA_-_Logo_2019_Reducido_%28TVPE%29.svg.png", 
+                stream: "https://cdnhd.iblups.com/hls/777b4d4cc0984575a7d14f6ee57dbcaf7.m3u8", 
+                web: "https://tvperu.gob.pe",
+                emojis: [{id:'peru', icon:'🇵🇪', count:74}, {id:'book', icon:'📚', count:28}, {id:'art', icon:'🎭', count:19}],
+                guia: "Cultura peruana, noticieros institucionales y documentales.",
+                epgId: "N/A"
+            },
+            { 
+                id: "RadioNacional.pe", name: "Radio Nacional TV (8.1)", category: "Noticias", 
+                logo: "https://upload.wikimedia.org/wikipedia/commons/c/c9/Radio_Nacional_Peru_2023.png", 
+                stream: "https://cdnhd.iblups.com/hls/0773874174fd4eba8bb9eff741d190dc.m3u8", 
+                web: "https://radionacional.com.pe",
+                emojis: [{id:'radio', icon:'📻', count:20}, {id:'music', icon:'🎶', count:35}, {id:'peru', icon:'🇵🇪', count:27}],
+                guia: "Folklore nacional, entrevistas y música criolla.",
+                epgId: "N/A"
+            },
+            { 
+                id: "ATV.pe", name: "ATV HD (9.1)", category: "Entretenimiento", 
+                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/ATV_Peru_2025.svg/3840px-ATV_Peru_2025.svg.png", 
+                stream: "http://187.102.210.46/ATV/index.m3u8", 
+                web: "https://atv.pe",
+                emojis: [{id:'fire', icon:'🔥', count:41}, {id:'popcorn', icon:'🍿', count:36}, {id:'laugh', icon:'😂', count:25}],
+                guia: "Series internacionales, farándula y reality shows.",
+                epgId: "N/A"
+            },
+            { 
+                id: "BethelTV.pe", name: "Bethel TV HD (10.1)", category: "Educativo", 
+                logo: "https://i.postimg.cc/B6SsXgSn/logo-bethel.png", 
+                stream: "https://alfa.betheltv.tv/srt/3_abr/playlist.m3u8", 
+                web: "https://betheltv.tv",
+                emojis: [{id:'pray', icon:'🙏', count:50}, {id:'heart', icon:'❤️', count:42}, {id:'peace', icon:'🕊️', count:23}],
+                guia: "Mensajes de fe, programas familiares y valores cristianos.",
+                epgId: "N/A"
+            },
+            { 
+                id: "VivaTV.pe", name: "Viva TV (11.1)", category: "Entretenimiento", 
+                logo: "https://i.postimg.cc/qR1tRgdS/Py-W6vij.png", 
+                stream: "https://live.obslivestream.com/vivatv/index.m3u8", 
+                web: "https://vivatv.pe",
+                emojis: [{id:'tv', icon:'📺', count:33}, {id:'spark', icon:'✨', count:26}, {id:'music', icon:'🎵', count:19}],
+                guia: "Videos musicales, entretenimiento y magacines independientes.",
+                epgId: "N/A"
+            },
+            { 
+                id: "USMPTV.pe", name: "USMP TV (12.1)", category: "Educativo", 
+                logo: "https://i.postimg.cc/BbCmtTvb/logousmp-60.jpg", 
+                stream: "https://streamusmptv.ddns.net/live/stream.m3u8", 
+                web: "https://usmptv.pe",
+                emojis: [{id:'grad', icon:'🎓', count:39}, {id:'book', icon:'📖', count:21}, {id:'light', icon:'💡', count:30}],
+                guia: "Programación cultural, ciencia y contenidos universitarios.",
+                epgId: "N/A"
+            },
+            { 
+                id: "IPe.pe", name: "Canal IPe HD (13.1)", category: "Educativo", 
+                logo: "https://upload.wikimedia.org/wikipedia/commons/0/04/Logo_Canal_IPe_2024.png", 
+                stream: "https://cdnhd.iblups.com/hls/3f2cb1658d114f2693eff18d83199e677.m3u8", 
+                web: "https://canalipe.tv",
+                emojis: [{id:'kids', icon:'🎨', count:48}, {id:'star', icon:'🌟', count:37}, {id:'smile', icon:'😄', count:31}],
+                guia: "Contenido exclusivo para niños, adolescentes y jóvenes talentos.",
+                epgId: "N/A"
+            }
+        ];
+
+        let jwPlayerInstance = null;
+        let canalActualIndex = 0;
+        let filtroCategoriaActual = 'all';
+        let favoritos = JSON.parse(localStorage.getItem('directope_favs')) || [];
+        let epgDataCache = {};
+
+        // Variables para la grabación de clips con MediaRecorder
+        let mediaRecorder = null;
+        let recordedChunks = [];
+        let isRecording = false;
+        let recInterval = null;
+        let recSeconds = 0;
+
+        function parseXmltvDate(dateStr) {
+            if (!dateStr || dateStr.length < 14) return null;
+            const year = parseInt(dateStr.substring(0, 4));
+            const month = parseInt(dateStr.substring(4, 6)) - 1;
+            const day = parseInt(dateStr.substring(6, 8));
+            const hour = parseInt(dateStr.substring(8, 10));
+            const minute = parseInt(dateStr.substring(10, 12));
+            const second = parseInt(dateStr.substring(12, 14));
+            
+            let tzOffsetMinutes = 0;
+            if (dateStr.length >= 19) {
+                const sign = dateStr.substring(14, 15) === '-' ? -1 : 1;
+                const tzHour = parseInt(dateStr.substring(15, 17));
+                const tzMin = parseInt(dateStr.substring(17, 19));
+                tzOffsetMinutes = sign * (tzHour * 60 + tzMin);
+            }
+            
+            const d = new Date(Date.UTC(year, month, day, hour, minute, second));
+            return new Date(d.getTime() - (tzOffsetMinutes * 60000));
+        }
+
+        function formatTime(dateObj) {
+            if (!dateObj || isNaN(dateObj)) return "--:--";
+            return dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+        }
+
+        async function cargarEpgImpeditor() {
+            try {
+                const proxyUrl = "https://api.allorigins.win/raw?url=" + encodeURIComponent("https://impeditor.com/epg/capanueve/capanueve");
+                const response = await fetch(proxyUrl);
+                if (!response.ok) throw new Error("Network response was not ok");
+                const textData = await response.text();
+                
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(textData, "text/xml");
+                const programmes = xmlDoc.getElementsByTagName("programme");
+                
+                for (let prog of programmes) {
+                    const channelId = prog.getAttribute("channel");
+                    if (!epgDataCache[channelId]) {
+                        epgDataCache[channelId] = [];
+                    }
+                    
+                    const startStr = prog.getAttribute("start");
+                    const stopStr = prog.getAttribute("stop");
+                    const titleEl = prog.getElementsByTagName("title")[0];
+                    const title = titleEl ? titleEl.textContent : "Sin info";
+                    
+                    const startDate = parseXmltvDate(startStr);
+                    const stopDate = parseXmltvDate(stopStr);
+                    
+                    epgDataCache[channelId].push({
+                        start: startDate,
+                        stop: stopDate,
+                        title: title
+                    });
+                }
+                
+                actualizarEpgVisual(canales[canalActualIndex]);
+            } catch (error) {
+                console.warn("No se pudo cargar la EPG XMLTV remota automáticamente:", error);
+            }
+        }
+
+        function actualizarEpgVisual(canal) {
+            const timeEl = document.getElementById('epg-time-now');
+            const currentShowEl = document.getElementById('epg-current-show');
+            const nextShowEl = document.getElementById('epg-next-show');
+            const idBadgeEl = document.getElementById('epg-id-badge');
+
+            idBadgeEl.textContent = 'EPG ID: ' + canal.epgId;
+
+            if (canal.epgId === "N/A") {
+                timeEl.textContent = "--:--";
+                currentShowEl.textContent = "Sin info";
+                nextShowEl.textContent = "Sin info";
+                return;
+            }
+
+            const programasCanal = epgDataCache[canal.epgId];
+            if (!programasCanal || programasCanal.length === 0) {
+                timeEl.textContent = "--:--";
+                currentShowEl.textContent = "Sin info";
+                nextShowEl.textContent = "Sin info";
+                return;
+            }
+
+            const now = new Date();
+            let programaActual = null;
+            let programaSiguiente = null;
+
+            for (let i = 0; i < programasCanal.length; i++) {
+                const p = programasCanal[i];
+                if (p.start && p.stop && now >= p.start && now < p.stop) {
+                    programaActual = p;
+                    if (i + 1 < programasCanal.length) {
+                        programaSiguiente = programasCanal[i + 1];
+                    }
+                    break;
+                }
+            }
+
+            if (programaActual) {
+                timeEl.textContent = `${formatTime(programaActual.start)} - ${formatTime(programaActual.stop)}`;
+                currentShowEl.textContent = programaActual.title;
+            } else {
+                timeEl.textContent = "--:--";
+                currentShowEl.textContent = "Sin info";
+            }
+
+            if (programaSiguiente) {
+                nextShowEl.textContent = `${formatTime(programaSiguiente.start)}: ${programaSiguiente.title}`;
+            } else {
+                nextShowEl.textContent = "Sin info";
+            }
+        }
+
+        function inicializarJWPlayer(streamUrl) {
+            if (jwPlayerInstance) {
+                jwPlayerInstance.setup({
+                    file: streamUrl,
+                    autostart: true,
+                    mute: false,
+                    width: "100%",
+                    height: "100%",
+                    aspectratio: "16:9"
+                });
+            } else {
+                jwPlayerInstance = jwplayer("jw-player-element").setup({
+                    file: streamUrl,
+                    autostart: true,
+                    mute: false,
+                    width: "100%",
+                    height: "100%",
+                    aspectratio: "16:9"
+                });
+            }
+        }
+
+        function sintonizarCanal(index) {
+            if (isRecording) {
+                detenerGrabacionClip(true); // Detener grabación activa al cambiar de canal por seguridad
+            }
+            canalActualIndex = index;
+            const canal = canales[index];
+            document.getElementById('current-title').textContent = canal.name;
+            document.getElementById('current-logo').src = canal.logo;
+            document.getElementById('current-id').textContent = 'ID: ' + canal.id;
+            document.getElementById('current-web').href = canal.web;
+            document.getElementById('current-category').textContent = canal.category;
+
+            actualizarEpgVisual(canal);
+            actualizarBotonFavorito();
+            renderizarReaccionesDinamicas(canal);
+            inicializarJWPlayer(canal.stream);
+
+            document.querySelectorAll('.channel-item').forEach((el) => {
+                if (parseInt(el.dataset.index) === index) {
+                    el.classList.add('active-channel');
+                    el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                } else {
+                    el.classList.remove('active-channel');
+                }
+            });
+        }
+
+        // --- NUEVA FUNCIONALIDAD: Capturar Fotograma (PNG Snapshot) ---
+        function capturarFotoCanal() {
+            const videoEl = document.querySelector('#jw-player-element video');
+            if (!videoEl) {
+                alert("El reproductor aún no está listo o la señal no permite la captura.");
+                return;
+            }
+            try {
+                const canvas = document.createElement('canvas');
+                canvas.width = videoEl.videoWidth || 1280;
+                canvas.height = videoEl.videoHeight || 720;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(videoEl, 0, 0, canvas.width, canvas.height);
+                
+                const dataURL = canvas.toDataURL('image/png');
+                const a = document.createElement('a');
+                a.href = dataURL;
+                a.download = `DirectoPE_${canales[canalActualIndex].id}_${Date.now()}.png`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            } catch (err) {
+                console.error("Error al capturar fotograma debido a restricciones CORS del stream:", err);
+                alert("No se pudo capturar la imagen debido a las políticas de seguridad CORS del servidor de video.");
+            }
+        }
+
+        // --- NUEVA FUNCIONALIDAD: Grabar Clip de Video Local ---
+        function toggleGrabarClip() {
+            if (!isRecording) {
+                iniciarGrabacionClip();
+            } else {
+                detenerGrabacionClip(false);
+            }
+        }
+
+        function iniciarGrabacionClip() {
+            const videoEl = document.querySelector('#jw-player-element video');
+            if (!videoEl) {
+                alert("Reproductor no disponible para grabación.");
+                return;
+            }
+
+            try {
+                // Intentar capturar stream del elemento de video HTML5 subyacente
+                let streamVideo = null;
+                if (videoEl.captureStream) {
+                    streamVideo = videoEl.captureStream();
+                } else if (videoEl.mozCaptureStream) {
+                    streamVideo = videoEl.mozCaptureStream();
+                } else {
+                    throw new Error("CaptureStream no soportado");
+                }
+
+                recordedChunks = [];
+                let options = { mimeType: 'video/webm;codecs=vp9,opus' };
+                if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+                    options = { mimeType: 'video/webm' };
+                }
+
+                mediaRecorder = new MediaRecorder(streamVideo, options);
+                mediaRecorder.ondataavailable = (event) => {
+                    if (event.data && event.data.size > 0) {
+                        recordedChunks.push(event.data);
+                    }
+                };
+
+                mediaRecorder.onstop = () => {
+                    const blob = new Blob(recordedChunks, { type: 'video/webm' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    a.download = `Clip_${canales[canalActualIndex].id}_${Date.now()}.webm`;
+                    document.body.appendChild(a);
+                    a.click();
+                    setTimeout(() => {
+                        document.body.removeChild(a);
+                        window.URL.revokeObjectURL(url);
+                    }, 100);
+                };
+
+                mediaRecorder.start();
+                isRecording = true;
+                
+                // Actualizar interfaz de grabación
+                document.getElementById('rec-btn').className = "px-3 py-1.5 bg-rose-500 text-white font-medium rounded-xl transition flex items-center gap-1.5 shadow-sm";
+                document.getElementById('rec-btn-text').textContent = "Detener Clip";
+                document.getElementById('rec-indicator').classList.remove('hidden');
+                document.getElementById('rec-indicator').classList.add('flex');
+                
+                recSeconds = 0;
+                document.getElementById('rec-timer').textContent = "00:00";
+                recInterval = setInterval(() => {
+                    recSeconds++;
+                    let m = Math.floor(recSeconds / 60).toString().padStart(2, '0');
+                    let s = (recSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('rec-timer').textContent = `${m}:${s}`;
+                }, 1000);
+
+            } catch (err) {
+                console.error("Error al iniciar la grabación del clip:", err);
+                alert("Tu navegador o la fuente de transmisión actual no permite la grabación directa de video por políticas de seguridad (CORS/Stream protegido).");
+            }
+        }
+
+        function detenerGrabacionClip(porCambioCanal) {
+            if (mediaRecorder && isRecording) {
+                mediaRecorder.stop();
+                isRecording = false;
+                clearInterval(recInterval);
+
+                document.getElementById('rec-btn').className = "px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-rose-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 hover:text-rose-600 font-medium rounded-xl transition flex items-center gap-1.5";
+                document.getElementById('rec-btn-text').textContent = "Grabar Clip";
+                document.getElementById('rec-indicator').classList.add('hidden');
+                document.getElementById('rec-indicator').classList.remove('flex');
+
+                if (porCambioCanal) {
+                    alert("La grabación se guardó automáticamente al cambiar de canal.");
+                }
+            }
+        }
+
+        function renderizarReaccionesDinamicas(canal) {
+            const container = document.getElementById('dynamic-reactions');
+            container.innerHTML = '';
+            canal.emojis.forEach(emo => {
+                const btn = document.createElement('button');
+                btn.className = "hover:scale-125 transition px-1.5 py-0.5 text-xs flex items-center gap-1";
+                btn.innerHTML = `${emo.icon} <span id="count-${emo.id}" class="text-[10px] font-bold text-slate-500">${emo.count}</span>`;
+                btn.onclick = () => {
+                    emo.count++;
+                    document.getElementById(`count-${emo.id}`).textContent = emo.count;
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        function sintonizarAleatorio() {
+            const randomIndex = Math.floor(Math.random() * canales.length);
+            sintonizarCanal(randomIndex);
+        }
+
+        function toggleFavoritoActual() {
+            const id = canales[canalActualIndex].id;
+            if (favoritos.includes(id)) {
+                favoritos = favoritos.filter(item => item !== id);
+            } else {
+                favoritos.push(id);
+            }
+            localStorage.setItem('directope_favs', JSON.stringify(favoritos));
+            actualizarBotonFavorito();
+            if (filtroCategoriaActual === 'favs') filtrarCanales();
+        }
+
+        function actualizarBotonFavorito() {
+            const id = canales[canalActualIndex].id;
+            const favBtn = document.getElementById('fav-btn');
+            if (favoritos.includes(id)) {
+                favBtn.innerHTML = `<i class="fa-solid fa-star text-amber-500"></i> <span>En Favoritos</span>`;
+                favBtn.classList.add('bg-amber-100', 'text-amber-700');
+            } else {
+                favBtn.innerHTML = `<i class="fa-regular fa-star"></i> <span>Favorito</span>`;
+                favBtn.classList.remove('bg-amber-100', 'text-amber-700');
+            }
+        }
+
+        function renderizarLista(lista) {
+            const container = document.getElementById('channels-list');
+            container.innerHTML = '';
+            
+            if (lista.length === 0) {
+                container.innerHTML = `<div class="text-center py-8 text-xs text-slate-400">No se encontraron canales</div>`;
+                return;
+            }
+
+            lista.forEach((canal) => {
+                const idx = canales.indexOf(canal);
+                const esFav = favoritos.includes(canal.id);
+                const cardElement = document.createElement('div');
+                cardElement.dataset.index = idx;
+                cardElement.className = `channel-item p-2.5 bg-slate-50 dark:bg-slate-800 hover:bg-rose-50 dark:hover:bg-slate-700/60 border border-slate-200/80 dark:border-slate-700 rounded-xl cursor-pointer transition-all flex items-center justify-between group ${idx === canalActualIndex ? 'active-channel' : ''}`;
+                cardElement.onclick = () => sintonizarCanal(idx);
+                cardElement.innerHTML = `
+                    <div class="flex items-center gap-2.5">
+                        <img src="${canal.logo}" alt="${canal.name}" class="h-7 w-10 object-contain bg-white dark:bg-slate-900 p-1 rounded border border-slate-100 dark:border-slate-800">
+                        <div>
+                            <h4 class="text-xs font-semibold text-slate-800 dark:text-slate-100 group-hover:text-directo-red transition-colors flex items-center gap-1.5">
+                                ${canal.name} ${esFav ? '<i class="fa-solid fa-star text-amber-400 text-[10px]"></i>' : ''}
+                            </h4>
+                            <span class="text-[10px] text-slate-400 font-mono">${canal.category} ${canal.epgId !== 'N/A' ? '• EPG ID: ' + canal.epgId : ''}</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button onclick="event.stopPropagation(); mostrarGuiaCanal(${idx})" title="Ver Guía Rápida" class="text-slate-400 hover:text-directo-red p-1"><i class="fa-solid fa-circle-info text-xs"></i></button>
+                        <i class="fa-solid fa-play text-[10px] text-slate-300 dark:text-slate-600 group-hover:text-directo-red"></i>
+                    </div>
+                `;
+                container.appendChild(cardElement);
+            });
+        }
+
+        function mostrarGuiaCanal(idx) {
+            const c = canales[idx];
+            let infoExtra = "Sin info";
+            if (c.epgId !== "N/A" && epgDataCache[c.epgId] && epgDataCache[c.epgId].length > 0) {
+                const now = new Date();
+                const p = epgDataCache[c.epgId].find(x => x.start && x.stop && now >= x.start && now < x.stop);
+                if (p) infoExtra = `${p.title} (${formatTime(p.start)} - ${formatTime(p.stop)})`;
+            }
+            alert(`📺 EPG CAPA9 [${c.name}]\n\nID Impeditor: ${c.epgId}\nPrograma actual:\n• ${infoExtra}`);
+        }
+
+        function filtrarCanales() {
+            const query = document.getElementById('search-input').value.toLowerCase();
+            const filtrados = canales.filter(c => {
+                const coincideTexto = c.name.toLowerCase().includes(query) || c.id.toLowerCase().includes(query);
+                let coincideCategoria = true;
+                if (filtroCategoriaActual === 'favs') {
+                    coincideCategoria = favoritos.includes(c.id);
+                } else if (filtroCategoriaActual !== 'all') {
+                    coincideCategoria = c.category === filtroCategoriaActual;
+                }
+                return coincideTexto && coincideCategoria;
+            });
+            renderizarLista(filtrados);
+        }
+
+        function filtrarCategoria(cat) {
+            filtroCategoriaActual = cat;
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                btn.className = 'cat-btn bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 font-medium px-2 py-0.5 rounded-lg transition shrink-0';
+            });
+            event.target.className = 'cat-btn bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 font-medium px-2 py-0.5 rounded-lg transition shrink-0';
+            filtrarCanales();
+        }
+
+        function toggleTeatro() {
+            const sidebar = document.getElementById('sidebar-container');
+            const playerCol = document.getElementById('player-container');
+            const btnText = document.getElementById('theater-text');
+
+            sidebar.classList.toggle('hidden');
+            if (sidebar.classList.contains('hidden')) {
+                playerCol.classList.replace('lg:col-span-8', 'lg:col-span-12');
+                btnText.textContent = "Mostrar Panel";
+            } else {
+                playerCol.classList.replace('lg:col-span-12', 'lg:col-span-8');
+                btnText.textContent = "Modo Cine";
+            }
+        }
+
+        function toggleDarkMode() {
+            document.documentElement.classList.toggle('dark');
+            const icon = document.getElementById('theme-icon');
+            if(document.documentElement.classList.contains('dark')) {
+                icon.className = 'fa-solid fa-sun text-amber-400 text-sm';
+            } else {
+                icon.className = 'fa-solid fa-moon text-sm';
+            }
+        }
+
+        const trivias = [
+            { q: "¿En qué frecuencia digital transmite Latina Televisión en Lima?", options: ["2.1 HD", "4.1 HD", "9.1 HD", "11.1 HD"], correct: 0 },
+            { q: "¿Cuál es el canal de televisión del estado peruano?", options: ["ATV", "TV Perú", "Panamericana", "Willax"], correct: 1 },
+            { q: "¿Qué canal infantil/juvenil público emite por el 13.1 HD?", options: ["USMP TV", "Asiri TV", "Canal IPe", "Bethel TV"], correct: 2 },
+            { q: "¿Qué frecuencia utiliza Willax Televisión en la TDA?", options: ["1.1 HD", "3.1 HD", "5.1 HD", "8.1 HD"], correct: 0 },
+            { q: "¿En qué frecuencia emite América Televisión en la TDA?", options: ["2.1 HD", "4.1 HD", "7.1 HD", "9.1 HD"], correct: 1 }
+        ];
+
+        let triviaIndex = 0;
+        let score = 0;
+
+        function cargarTrivia() {
+            const item = trivias[triviaIndex];
+            document.getElementById('trivia-question').textContent = item.q;
+            const container = document.getElementById('trivia-options');
+            container.innerHTML = '';
+            document.getElementById('trivia-feedback').classList.add('hidden');
+
+            item.options.forEach((opt, i) => {
+                const btn = document.createElement('button');
+                btn.className = "bg-slate-800 hover:bg-slate-700 text-slate-200 py-2 px-3 rounded-xl transition text-left border border-slate-700 font-medium text-xs";
+                btn.textContent = opt;
+                btn.onclick = () => responderTrivia(i);
+                container.appendChild(btn);
+            });
+        }
+
+        function responderTrivia(optionIndex) {
+            const item = trivias[triviaIndex];
+            const feedback = document.getElementById('trivia-feedback');
+            feedback.classList.remove('hidden');
+
+            if (optionIndex === item.correct) {
+                score += 10;
+                document.getElementById('trivia-score').textContent = score;
+                feedback.className = "text-xs font-bold pt-1 text-emerald-400";
+                feedback.textContent = "¡Correcto! +10 pts 🎯";
+            } else {
+                feedback.className = "text-xs font-bold pt-1 text-rose-400";
+                feedback.textContent = "Incorrecto ❌";
+            }
+
+            setTimeout(() => {
+                triviaIndex = (triviaIndex + 1) % trivias.length;
+                cargarTrivia();
+            }, 1500);
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.target.tagName === 'INPUT') return;
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                const nextIndex = (canalActualIndex + 1) % canales.length;
+                sintonizarCanal(nextIndex);
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                const prevIndex = (canalActualIndex - 1 + canales.length) % canales.length;
+                sintonizarCanal(prevIndex);
+            }
+        });
+
+        renderizarLista(canales);
+        sintonizarCanal(0);
+        cargarTrivia();
+        cargarEpgImpeditor();
+    </script>
+</body>
+</html>

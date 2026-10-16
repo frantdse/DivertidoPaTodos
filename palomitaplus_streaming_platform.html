@@ -1,0 +1,1901 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PalomitaPlus | Tu Plataforma de Streaming</title>
+
+    <!-- Google Fonts: Montserrat (Headers), Plus Jakarta Sans (UI/Buttons), Poppins (Body Text) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous">
+
+    <style>
+        :root {
+            --bg-primary: #020228;
+            --bg-secondary: #090838;
+            --bg-card: rgba(18, 11, 46, 0.7);
+            --accent-pink: #ff00e5;
+            --accent-purple: #b535f6;
+            --accent-deep-purple: #9b34ef;
+            --accent-dark-purple: #490cb0;
+            --text-main: #ffffff;
+            --text-muted: #a3a3c2;
+            --gradient-primary: linear-gradient(135deg, #ff00e5 0%, #b535f6 50%, #490cb0 100%);
+            --gradient-button: linear-gradient(90deg, #9b34ef 0%, #490cb0 50%, #ff00e5 100%);
+            --gradient-card: linear-gradient(180deg, rgba(181, 53, 246, 0.15) 0%, rgba(2, 2, 40, 0.95) 100%);
+            
+            --font-heading: 'Montserrat', sans-serif;
+            --font-ui: 'Plus Jakarta Sans', sans-serif;
+            --font-body: 'Poppins', sans-serif;
+        }
+
+        /* Reset & Base Typography */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            text-decoration: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: var(--font-heading);
+        }
+
+        button, input, select, a {
+            font-family: var(--font-ui);
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent-purple);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-pink);
+        }
+
+        /* Header / Navbar */
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 5%;
+            background: rgba(2, 2, 40, 0.88);
+            backdrop-filter: blur(15px);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(181, 53, 246, 0.2);
+            transition: background 0.3s ease;
+        }
+
+        .brand_logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: var(--font-heading);
+            font-size: 1.7rem;
+            font-weight: 900;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #ffffff 20%, #b535f6 60%, #ff00e5 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .brand_logo i {
+            -webkit-text-fill-color: initial;
+            color: var(--accent-pink);
+            font-size: 1.8rem;
+            filter: drop-shadow(0 0 10px var(--accent-pink));
+        }
+
+        .nav_links {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            list-style: none;
+        }
+
+        .nav_links a {
+            color: var(--text-main);
+            font-size: 0.9rem;
+            font-weight: 600;
+            opacity: 0.8;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav_links a:hover, .nav_links a.active {
+            opacity: 1;
+            color: var(--accent-pink);
+        }
+
+        .nav_links a.active::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--accent-pink);
+            box-shadow: 0 0 10px var(--accent-pink);
+            border-radius: 2px;
+        }
+
+        .nav_actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 10px 22px;
+            border-radius: 25px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn_gradient {
+            background: var(--gradient-button);
+            background-size: 200%;
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(155, 52, 239, 0.4);
+        }
+
+        .btn_gradient:hover {
+            background-position: right center;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 0, 229, 0.6);
+        }
+
+        .btn_outline {
+            background: transparent;
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+
+        .btn_outline:hover {
+            border-color: var(--accent-purple);
+            background: rgba(181, 53, 246, 0.15);
+        }
+
+        .btn_glass {
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+        }
+
+        .btn_glass:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+        }
+
+        /* Search Bar */
+        .search_bar {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .search_bar input {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 8px 14px 8px 36px;
+            border-radius: 20px;
+            color: #fff;
+            font-size: 0.85rem;
+            outline: none;
+            width: 170px;
+            transition: all 0.3s ease;
+        }
+
+        .search_bar input:focus {
+            width: 230px;
+            border-color: var(--accent-purple);
+            box-shadow: 0 0 10px rgba(181, 53, 246, 0.4);
+        }
+
+        .search_bar i {
+            position: absolute;
+            left: 12px;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.85rem;
+            pointer-events: none;
+        }
+
+        /* Profile Dropdown Badge */
+        .profile_badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 4px 12px 4px 6px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            position: relative;
+        }
+
+        .profile_avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 0.85rem;
+        }
+
+        /* PUBLIC LANDING VIEW */
+        #publicLanding {
+            display: block;
+        }
+
+        .hero_landing {
+            position: relative;
+            height: 88vh;
+            min-height: 580px;
+            margin-top: 65px;
+            display: flex;
+            align-items: flex-end;
+            overflow: hidden;
+        }
+
+        .video_bg_container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .video_bg_container video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(0.55);
+        }
+
+        .hero_landing_overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, rgba(2, 2, 40, 0.2) 0%, rgba(2, 2, 40, 0.85) 75%, var(--bg-primary) 100%),
+                        linear-gradient(90deg, rgba(2, 2, 40, 0.9) 0%, transparent 65%);
+            z-index: 2;
+        }
+
+        .hero_landing_content {
+            position: relative;
+            z-index: 3;
+            max-width: 780px;
+            padding: 0 5% 70px 5%;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .hero_promo_badge {
+            background: rgba(255, 0, 229, 0.2);
+            border: 1px solid var(--accent-pink);
+            color: #fff;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            width: fit-content;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .hero_landing_title {
+            font-size: 3.5rem;
+            font-weight: 900;
+            line-height: 1.08;
+            background: linear-gradient(180deg, #ffffff 30%, #e0c3fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero_landing_subtitle {
+            font-size: 1.15rem;
+            color: rgba(255, 255, 255, 0.85);
+            line-height: 1.6;
+            max-width: 620px;
+        }
+
+        /* Hubs Section */
+        .hubs_section {
+            padding: 60px 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section_header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .section_title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .section_desc {
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        .hubs_grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+        }
+
+        .hub_card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.01));
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 16px;
+            padding: 25px 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+        }
+
+        .hub_card:hover {
+            transform: translateY(-8px);
+            border-color: var(--accent-purple);
+            background: linear-gradient(135deg, rgba(181, 53, 246, 0.25), rgba(73, 12, 176, 0.25));
+            box-shadow: 0 12px 30px rgba(181, 53, 246, 0.4);
+        }
+
+        .hub_icon {
+            font-size: 2rem;
+            color: var(--accent-pink);
+        }
+
+        .hub_title {
+            font-weight: 800;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+        }
+
+        /* Subscription Plans Section */
+        .plans_section {
+            padding: 80px 5%;
+            background: linear-gradient(180deg, var(--bg-primary) 0%, rgba(18, 11, 46, 0.9) 50%, var(--bg-primary) 100%),
+                        radial-gradient(circle at center, rgba(181, 53, 246, 0.12) 0%, transparent 70%);
+            border-top: 1px solid rgba(181, 53, 246, 0.2);
+            border-bottom: 1px solid rgba(181, 53, 246, 0.2);
+        }
+
+        .plan_switcher {
+            display: flex;
+            justify-content: center;
+            margin: 30px 0 50px 0;
+        }
+
+        .switcher_bg {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 6px;
+            border-radius: 35px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            display: flex;
+            gap: 6px;
+        }
+
+        .switcher_btn {
+            padding: 10px 24px;
+            border-radius: 30px;
+            border: none;
+            background: transparent;
+            color: #fff;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .switcher_btn.active {
+            background: var(--gradient-button);
+            box-shadow: 0 4px 15px rgba(155, 52, 239, 0.5);
+        }
+
+        .plans_grid {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .plan_card {
+            background: var(--bg-card);
+            border: 1px solid rgba(181, 53, 246, 0.3);
+            border-radius: 20px;
+            padding: 40px 30px;
+            width: 100%;
+            max-width: 350px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 25px;
+            position: relative;
+            transition: all 0.4s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .plan_card.featured {
+            border: 2px solid var(--accent-pink);
+            transform: scale(1.04);
+            box-shadow: 0 15px 40px rgba(255, 0, 229, 0.25);
+        }
+
+        .plan_badge {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent-pink);
+            color: #fff;
+            font-size: 0.75rem;
+            font-weight: 800;
+            padding: 5px 18px;
+            border-radius: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 12px rgba(255, 0, 229, 0.5);
+        }
+
+        .plan_header h3 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .plan_price {
+            font-size: 2.3rem;
+            font-weight: 900;
+            color: var(--accent-pink);
+            font-family: var(--font-heading);
+        }
+
+        .plan_period {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: normal;
+        }
+
+        .plan_features {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            font-size: 0.9rem;
+        }
+
+        .plan_features li {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            color: rgba(255, 255, 255, 0.85);
+            line-height: 1.4;
+        }
+
+        .plan_features li i {
+            color: var(--accent-pink);
+            margin-top: 3px;
+        }
+
+        /* FAQ Accordion Section */
+        .faq_section {
+            padding: 80px 5%;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .faq_accordion {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .faq_item {
+            background: rgba(18, 11, 46, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: border-color 0.3s ease;
+        }
+
+        .faq_item:hover {
+            border-color: var(--accent-purple);
+        }
+
+        .faq_header {
+            padding: 20px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 1.05rem;
+            user-select: none;
+        }
+
+        .faq_header i {
+            transition: transform 0.3s ease;
+            color: var(--accent-purple);
+        }
+
+        .faq_body {
+            padding: 0 25px 20px 25px;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            display: none;
+        }
+
+        .faq_item.active .faq_body {
+            display: block;
+        }
+
+        .faq_item.active .faq_header i {
+            transform: rotate(180deg);
+            color: var(--accent-pink);
+        }
+
+        /* MAIN APP VIEW (LOGGED IN) */
+        #mainAppView {
+            display: none;
+            margin-top: 65px;
+        }
+
+        .app_hero {
+            position: relative;
+            height: 80vh;
+            min-height: 520px;
+            display: flex;
+            align-items: flex-end;
+            overflow: hidden;
+        }
+
+        .app_hero_bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .app_hero_bg img, .app_hero_bg video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .app_hero_overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, rgba(2, 2, 40, 0.2) 0%, rgba(2, 2, 40, 0.8) 75%, var(--bg-primary) 100%),
+                        linear-gradient(90deg, rgba(2, 2, 40, 0.85) 0%, transparent 60%);
+            z-index: 2;
+        }
+
+        .app_hero_content {
+            position: relative;
+            z-index: 3;
+            max-width: 680px;
+            padding: 0 5% 50px 5%;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .app_hero_title {
+            font-size: 3rem;
+            font-weight: 900;
+            line-height: 1.1;
+        }
+
+        .app_hero_meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .meta_badge {
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .app_hero_desc {
+            font-size: 0.95rem;
+            color: rgba(255,255,255,0.85);
+            line-height: 1.5;
+        }
+
+        .app_hero_actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        /* Movie Rows & Carousel */
+        .content_section {
+            padding: 30px 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .row_title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .cards_scroll_wrapper {
+            display: flex;
+            gap: 18px;
+            overflow-x: auto;
+            padding: 15px 5px 25px 5px;
+            scroll-behavior: smooth;
+        }
+
+        .media_card {
+            flex: 0 0 calc(20% - 15px);
+            min-width: 190px;
+            border-radius: 14px;
+            background: var(--bg-card);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.5);
+        }
+
+        .media_card:hover {
+            transform: scale(1.08) translateY(-6px);
+            z-index: 20;
+            border-color: var(--accent-pink);
+            box-shadow: 0 12px 28px rgba(255, 0, 229, 0.4);
+        }
+
+        .media_poster {
+            width: 100%;
+            aspect-ratio: 2/3;
+            object-fit: cover;
+            display: block;
+            background: #100b30;
+        }
+
+        .media_info {
+            padding: 12px;
+            background: linear-gradient(180deg, transparent 0%, rgba(2, 2, 40, 0.95) 80%);
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            transform: translateY(20%);
+            opacity: 0.9;
+            transition: all 0.3s ease;
+        }
+
+        .media_card:hover .media_info {
+            transform: translateY(0);
+            opacity: 1;
+            background: rgba(2, 2, 40, 0.95);
+        }
+
+        .media_title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 4px;
+        }
+
+        .media_meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .card_tag {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--gradient-button);
+            font-size: 0.65rem;
+            font-weight: 800;
+            padding: 3px 8px;
+            border-radius: 6px;
+            text-transform: uppercase;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.6);
+            z-index: 2;
+        }
+
+        .btn_bookmark_card {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(4px);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            z-index: 2;
+        }
+
+        .btn_bookmark_card:hover {
+            background: var(--accent-pink);
+            border-color: var(--accent-pink);
+            transform: scale(1.1);
+        }
+
+        /* Modals Overlay */
+        .modal_overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(2, 2, 40, 0.92);
+            backdrop-filter: blur(16px);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+
+        .modal_overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal_box {
+            background: rgba(18, 11, 46, 0.92);
+            border: 1px solid rgba(181, 53, 246, 0.4);
+            border-radius: 20px;
+            padding: 40px;
+            width: 90%;
+            max-width: 480px;
+            position: relative;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .modal_overlay.active .modal_box {
+            transform: scale(1);
+        }
+
+        .modal_close {
+            position: absolute;
+            top: 18px;
+            right: 22px;
+            font-size: 1.8rem;
+            color: #fff;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .modal_close:hover {
+            color: var(--accent-pink);
+        }
+
+        .form_title {
+            text-align: center;
+            font-size: 1.6rem;
+            font-weight: 800;
+            margin-bottom: 25px;
+        }
+
+        .form_group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .form_group label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .input_field {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 12px 16px;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .input_field:focus {
+            border-color: var(--accent-purple);
+        }
+
+        /* Profile Selector Modal */
+        .profiles_container {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+
+        .profile_card_item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .profile_card_item:hover {
+            transform: scale(1.08);
+        }
+
+        .profile_avatar_lg {
+            width: 85px;
+            height: 85px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            font-weight: 800;
+            border: 3px solid transparent;
+            transition: border-color 0.3s ease;
+        }
+
+        .profile_card_item:hover .profile_avatar_lg {
+            border-color: var(--accent-pink);
+            box-shadow: 0 0 20px var(--accent-pink);
+        }
+
+        /* Video Player Modal */
+        .video_modal_box {
+            width: 95%;
+            max-width: 1050px;
+            background: #000;
+            border-radius: 16px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9);
+            border: 1px solid rgba(181, 53, 246, 0.3);
+        }
+
+        .video_player_container {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: #000;
+        }
+
+        .video_player_container video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .video_controls_overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(0deg, rgba(0,0,0,0.95) 0%, transparent 100%);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .video_player_container:hover .video_controls_overlay {
+            opacity: 1;
+        }
+
+        .progress_bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .progress_filled {
+            width: 35%;
+            height: 100%;
+            background: var(--accent-pink);
+            border-radius: 3px;
+            box-shadow: 0 0 10px var(--accent-pink);
+        }
+
+        .controls_buttons {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .controls_left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .controls_btn {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .controls_btn:hover {
+            color: var(--accent-pink);
+        }
+
+        /* Footer */
+        footer {
+            padding: 60px 5% 40px 5%;
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .footer_links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 25px;
+        }
+
+        .footer_links a {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .footer_links a:hover {
+            color: #fff;
+        }
+
+        .footer_socials {
+            display: flex;
+            gap: 20px;
+        }
+
+        .footer_socials a i {
+            color: var(--text-muted);
+            font-size: 1.3rem;
+            transition: all 0.3s ease;
+        }
+
+        .footer_socials a i:hover {
+            color: var(--accent-pink);
+            transform: translateY(-3px);
+        }
+
+        .footer_copy {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.8rem;
+        }
+
+        /* Responsive Breakpoints */
+        @media screen and (max-width: 1024px) {
+            .media_card {
+                flex: 0 0 calc(33.33% - 12px);
+            }
+            .hero_landing_title {
+                font-size: 2.8rem;
+            }
+        }
+
+        @media screen and (max-width: 768px) {
+            .nav_links {
+                display: none; /* Mobile view */
+            }
+            .hero_landing_title {
+                font-size: 2.2rem;
+            }
+            .app_hero_title {
+                font-size: 2.2rem;
+            }
+            .media_card {
+                flex: 0 0 calc(48% - 10px);
+            }
+            .plan_card.featured {
+                transform: none;
+            }
+            .search_bar input {
+                width: 120px;
+            }
+            .search_bar input:focus {
+                width: 160px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR (PUBLIC & APP ADAPTIVE) -->
+    <nav class="navbar">
+        <div class="brand_logo" onclick="handleLogoClick()">
+            <i class="fa-solid fa-popcorn"></i> PalomitaPlus
+        </div>
+
+        <!-- Links for logged-in user -->
+        <ul class="nav_links" id="appNavLinks" style="display: none;">
+            <li><a href="#" class="active" onclick="filterAppCategory('all', event)">Inicio</a></li>
+            <li><a href="#" onclick="filterAppCategory('peliculas', event)">Películas</a></li>
+            <li><a href="#" onclick="filterAppCategory('series', event)">Séries</a></li>
+            <li><a href="#" onclick="filterAppCategory('mi_lista', event)">Mi Lista</a></li>
+        </ul>
+
+        <div class="nav_actions">
+            <!-- Search bar (Only shown when logged in) -->
+            <div class="search_bar" id="appSearchBar" style="display: none;">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="searchInput" placeholder="Buscar título..." oninput="handleSearch()">
+            </div>
+
+            <!-- Public Action Buttons -->
+            <div id="publicNavButtons" style="display: flex; gap: 12px;">
+                <button class="btn btn_outline" onclick="openModal('loginModal')">Iniciar Sesión</button>
+                <button class="btn btn_gradient" onclick="openModal('registerModal')">Crear Cuenta</button>
+            </div>
+
+            <!-- Logged-in Profile Badge -->
+            <div id="userProfileBadge" class="profile_badge" style="display: none;" onclick="openModal('profileModal')">
+                <div class="profile_avatar" id="badgeAvatarLetter">U</div>
+                <span id="badgeUserName" style="font-size:0.85rem; font-weight:700;">Usuario</span>
+                <i class="fa-solid fa-chevron-down" style="font-size:0.75rem; color:var(--text-muted);"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 1. PUBLIC LANDING VIEW (UNAUTHENTICATED) -->
+    <div id="publicLanding">
+        <header class="hero_landing">
+            <div class="video_bg_container">
+                <video autoplay muted loop poster="https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=1200">
+                    <source src="https://commondatastorage.googleapis.com/gtp-videos-bucket/sample/TearsOfSteel.mp4" type="video/mp4">
+                </video>
+            </div>
+            <div class="hero_landing_overlay"></div>
+
+            <div class="hero_landing_content">
+                <span class="hero_promo_badge"><i class="fa-solid fa-fire"></i> Estreno Exclusivo</span>
+                <h1 class="hero_landing_title">Siente la emoción del mejor entretenimiento</h1>
+                <p class="hero_landing_subtitle">
+                    Las mejores películas, series originales, eventos en vivo y animación en un solo lugar. Cancela cuando quieras.
+                </p>
+                <div>
+                    <button class="btn btn_gradient" style="padding: 16px 36px; font-size: 0.95rem;" onclick="openModal('registerModal')">
+                        Crear tu cuenta gratis <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Brand Hubs -->
+        <section class="hubs_section">
+            <div class="section_header">
+                <h2 class="section_title">Descubre nuestros universos</h2>
+                <p class="section_desc">Explora el contenido exclusivo de las mejores marcas del cine y la TV.</p>
+            </div>
+            <div class="hubs_grid">
+                <div class="hub_card" onclick="openModal('registerModal')">
+                    <i class="fa-solid fa-film hub_icon"></i>
+                    <span class="hub_title">Palomita Originals</span>
+                </div>
+                <div class="hub_card" onclick="openModal('registerModal')">
+                    <i class="fa-solid fa-mask hub_icon"></i>
+                    <span class="hub_title">DC Studio</span>
+                </div>
+                <div class="hub_card" onclick="openModal('registerModal')">
+                    <i class="fa-solid fa-clapperboard hub_icon"></i>
+                    <span class="hub_title">Warner Cinema</span>
+                </div>
+                <div class="hub_card" onclick="openModal('registerModal')">
+                    <i class="fa-solid fa-child hub_icon"></i>
+                    <span class="hub_title">Animación & Kids</span>
+                </div>
+                <div class="hub_card" onclick="openModal('registerModal')">
+                    <i class="fa-solid fa-trophy hub_icon"></i>
+                    <span class="hub_title">Champions Sports</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Subscription Plans -->
+        <section class="plans_section" id="plansSection">
+            <div class="section_header">
+                <h2 class="section_title">Elige el plan perfecto para ti</h2>
+                <p class="section_desc">Sin contratos de permanencia. Cambia o cancela tu plan en cualquier momento.</p>
+            </div>
+
+            <div class="plan_switcher">
+                <div class="switcher_bg">
+                    <button class="switcher_btn active" id="btnMonthly" onclick="toggleBilling('monthly')">Pago Mensual</button>
+                    <button class="switcher_btn" id="btnAnnual" onclick="toggleBilling('annual')">Pago Anual (Ahorra 40%)</button>
+                </div>
+            </div>
+
+            <div class="plans_grid">
+                <div class="plan_card">
+                    <div class="plan_header">
+                        <h3>Móvil</h3>
+                        <div class="plan_price" id="priceMobile">$4.99 <span class="plan_period" id="periodMobile">/mes</span></div>
+                    </div>
+                    <ul class="plan_features">
+                        <li><i class="fa-solid fa-check"></i> Diseñado para smartphones y tablets.</li>
+                        <li><i class="fa-solid fa-check"></i> 1 pantalla simultánea.</li>
+                        <li><i class="fa-solid fa-check"></i> Calidad de video estándar (HD).</li>
+                        <li><i class="fa-solid fa-check"></i> Descarga hasta 5 títulos para ver offline.</li>
+                    </ul>
+                    <button class="btn btn_gradient" onclick="selectPlanAndRegister('Móvil')">Elegir Móvil</button>
+                </div>
+
+                <div class="plan_card featured">
+                    <span class="plan_badge">Más Recomendado</span>
+                    <div class="plan_header">
+                        <h3>Estándar</h3>
+                        <div class="plan_price" id="priceStandard">$8.99 <span class="plan_period" id="periodStandard">/mes</span></div>
+                    </div>
+                    <ul class="plan_features">
+                        <li><i class="fa-solid fa-check"></i> Disfruta en Smart TV, PC, tablet o teléfono.</li>
+                        <li><i class="fa-solid fa-check"></i> 2 pantallas simultáneas en Full HD.</li>
+                        <li><i class="fa-solid fa-check"></i> Audio Dolby Digital 5.1.</li>
+                        <li><i class="fa-solid fa-check"></i> Hasta 30 descargas offline.</li>
+                    </ul>
+                    <button class="btn btn_gradient" onclick="selectPlanAndRegister('Estándar')">Elegir Estándar</button>
+                </div>
+
+                <div class="plan_card">
+                    <div class="plan_header">
+                        <h3>Premium 4K</h3>
+                        <div class="plan_price" id="pricePremium">$12.99 <span class="plan_period" id="periodPremium">/mes</span></div>
+                    </div>
+                    <ul class="plan_features">
+                        <li><i class="fa-solid fa-check"></i> Todos los dispositivos compatibles.</li>
+                        <li><i class="fa-solid fa-check"></i> 4 pantallas simultáneas en 4K Ultra HD + HDR.</li>
+                        <li><i class="fa-solid fa-check"></i> Audio Atmos inmersivo.</li>
+                        <li><i class="fa-solid fa-check"></i> Descargas ilimitadas y 5 perfiles familiares.</li>
+                    </ul>
+                    <button class="btn btn_gradient" onclick="selectPlanAndRegister('Premium 4K')">Elegir Premium</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section class="faq_section">
+            <div class="section_header">
+                <h2 class="section_title">Preguntas Frecuentes</h2>
+            </div>
+            <div class="faq_accordion">
+                <div class="faq_item active" onclick="toggleFaq(this)">
+                    <div class="faq_header">
+                        <span>¿Qué es PalomitaPlus?</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                    <div class="faq_body">
+                        PalomitaPlus es la plataforma de streaming de nueva generación que reúne las producciones cinematográficas más aclamadas, series de televisión exclusivas, eventos deportivos y títulos animados para toda la familia.
+                    </div>
+                </div>
+
+                <div class="faq_item" onclick="toggleFaq(this)">
+                    <div class="faq_header">
+                        <span>¿Cuánto cuesta la suscripción?</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                    <div class="faq_body">
+                        Contamos con planes desde $4.99 al mes. Si eliges el plan de pago anual, obtienes un descuento automático de hasta el 40% equivalente a varios meses gratis.
+                    </div>
+                </div>
+
+                <div class="faq_item" onclick="toggleFaq(this)">
+                    <div class="faq_header">
+                        <span>¿En qué dispositivos puedo ver contenido?</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                    <div class="faq_body">
+                        Puedes acceder desde Smart TVs (Samsung, LG, Android TV), consolas de videojuegos, computadoras (Windows/Mac) y dispositivos móviles iOS y Android.
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- 2. MAIN LOGGED-IN APP VIEW -->
+    <div id="mainAppView">
+        <header class="app_hero">
+            <div class="app_hero_bg">
+                <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1400&q=80" alt="Hero Background" id="appHeroBg">
+            </div>
+            <div class="app_hero_overlay"></div>
+
+            <div class="app_hero_content">
+                <span class="hero_promo_badge"><i class="fa-solid fa-star"></i> #1 En PalomitaPlus</span>
+                <h1 class="app_hero_title" id="appHeroTitle">El Último Sobreviviente</h1>
+                <div class="app_hero_meta">
+                    <span id="appHeroYear">2024</span>
+                    <span class="meta_badge">4K ULTRA HD</span>
+                    <span class="meta_badge">16+</span>
+                    <span id="appHeroType">Série Exclusiva</span>
+                </div>
+                <p class="app_hero_desc" id="appHeroDesc">
+                    En un futuro distópico, un grupo de valientes exploradores se adentra en territorios inhóspitos para desvelar el secreto que cambiará el destino de la humanidad.
+                </p>
+                <div class="app_hero_actions">
+                    <button class="btn btn_gradient" onclick="playCurrentHeroVideo()">
+                        <i class="fa-solid fa-play"></i> Ver Ahora
+                    </button>
+                    <button class="btn btn_glass" id="heroBookmarkBtn" onclick="toggleHeroBookmark()">
+                        <i class="fa-solid fa-plus"></i> Mi Lista
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dynamic Content Rows -->
+        <section class="content_section">
+            <h2 class="row_title" id="mainCatalogTitle">Tendencias Ahora</h2>
+            <div class="cards_scroll_wrapper" id="trendingRow">
+                <!-- Dynamically Populated by JS -->
+            </div>
+        </section>
+
+        <section class="content_section">
+            <h2 class="row_title">Acción & Éxitos del Cine</h2>
+            <div class="cards_scroll_wrapper" id="actionRow">
+                <!-- Dynamically Populated by JS -->
+            </div>
+        </section>
+
+        <section class="content_section">
+            <h2 class="row_title">Séries Recomendadas</h2>
+            <div class="cards_scroll_wrapper" id="seriesRow">
+                <!-- Dynamically Populated by JS -->
+            </div>
+        </section>
+    </div>
+
+    <!-- 3. MODALS (AUTH, PROFILES, PLAYER) -->
+
+    <!-- Login Modal -->
+    <div class="modal_overlay" id="loginModal">
+        <div class="modal_box">
+            <span class="modal_close" onclick="closeModal('loginModal')">&times;</span>
+            <h3 class="form_title">Iniciar Sesión</h3>
+            <form onsubmit="handleLoginSubmit(event)">
+                <div class="form_group">
+                    <label>Correo Electrónico</label>
+                    <input type="email" id="loginEmail" required class="input_field" placeholder="tu@email.com">
+                </div>
+                <div class="form_group">
+                    <label>Contraseña</label>
+                    <input type="password" id="loginPassword" required class="input_field" placeholder="••••••••">
+                </div>
+                <button type="submit" class="btn btn_gradient" style="width:100%; margin-top:10px;">Ingresar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div class="modal_overlay" id="registerModal">
+        <div class="modal_box">
+            <span class="modal_close" onclick="closeModal('registerModal')">&times;</span>
+            <h3 class="form_title">Crear tu Cuenta</h3>
+            <form onsubmit="handleRegisterSubmit(event)">
+                <div class="form_group">
+                    <label>Nombre de Usuario</label>
+                    <input type="text" id="regName" required class="input_field" placeholder="Ej. Carlos">
+                </div>
+                <div class="form_group">
+                    <label>Correo Electrónico</label>
+                    <input type="email" id="regEmail" required class="input_field" placeholder="tu@email.com">
+                </div>
+                <div class="form_group">
+                    <label>Contraseña</label>
+                    <input type="password" id="regPass" required class="input_field" placeholder="••••••••">
+                </div>
+                <div class="form_group">
+                    <label>Plan Seleccionado</label>
+                    <select id="regPlan" class="input_field">
+                        <option value="Móvil">Plan Móvil - $4.99/mes</option>
+                        <option value="Estándar" selected>Plan Estándar - $8.99/mes</option>
+                        <option value="Premium 4K">Plan Premium 4K - $12.99/mes</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn_gradient" style="width:100%; margin-top:10px;">Completar Registro</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- User Profile Modal (Account Management & Logout) -->
+    <div class="modal_overlay" id="profileModal">
+        <div class="modal_box" style="text-align: center;">
+            <span class="modal_close" onclick="closeModal('profileModal')">&times;</span>
+            <h3 class="form_title">¿Quién está viendo?</h3>
+            <div class="profiles_container">
+                <div class="profile_card_item" onclick="selectProfile('Usuario Principal')">
+                    <div class="profile_avatar_lg" id="modalProfileLetter">U</div>
+                    <span id="modalProfileName" style="font-weight:700;">Usuario</span>
+                </div>
+                <div class="profile_card_item" onclick="selectProfile('Niños')">
+                    <div class="profile_avatar_lg" style="background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);">N</div>
+                    <span style="font-weight:700;">Niños</span>
+                </div>
+            </div>
+            <div style="margin-top: 35px;">
+                <button class="btn btn_outline" onclick="logoutUser()">Cerrar Sesión</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Video Player Modal -->
+    <div class="modal_overlay" id="playerModal">
+        <div class="video_modal_box">
+            <span class="modal_close" onclick="closeVideoPlayer()" style="position:absolute; top:12px; right:15px; z-index:30;">&times;</span>
+            <div class="video_player_container">
+                <video id="mainVideoElement" poster="https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=1200">
+                    <source src="https://commondatastorage.googleapis.com/gtp-videos-bucket/sample/TearsOfSteel.mp4" type="video/mp4">
+                </video>
+                <div class="video_controls_overlay">
+                    <div class="progress_bar" onclick="seekVideo(event)">
+                        <div class="progress_filled" id="videoProgressBar"></div>
+                    </div>
+                    <div class="controls_buttons">
+                        <div class="controls_left">
+                            <button class="controls_btn" onclick="togglePlayPause()"><i class="fa-solid fa-play" id="playIcon"></i></button>
+                            <button class="controls_btn" onclick="toggleMute()"><i class="fa-solid fa-volume-high" id="volumeIcon"></i></button>
+                            <span id="videoTitleText" style="font-weight:700; font-size:0.9rem; color:#fff;">Reproduciendo Título</span>
+                        </div>
+                        <div>
+                            <button class="controls_btn" onclick="toggleFullscreen()"><i class="fa-solid fa-expand"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer_links">
+            <a href="#">Términos de Uso</a>
+            <a href="#">Política de Privacidad</a>
+            <a href="#">Anuncios Basados en Intereses</a>
+            <a href="#">Centro de Ayuda</a>
+            <a href="#">Dispositivos Compatibles</a>
+        </div>
+        <div class="footer_socials">
+            <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+            <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
+            <a href="#"><i class="fa-brands fa-instagram"></i></a>
+            <a href="#"><i class="fa-brands fa-youtube"></i></a>
+        </div>
+        <p class="footer_copy">© 2026 PalomitaPlus. Todos los derechos reservados. Plataforma interactiva de prueba.</p>
+    </footer>
+
+    <script>
+        // Media Catalog Data
+        const mediaCatalog = [
+            {
+                id: '1',
+                title: 'El Último Sobreviviente',
+                category: 'series',
+                genre: 'accion',
+                year: '2024',
+                badge: 'Palomita Exclusivo',
+                poster: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=500&q=80',
+                desc: 'En un futuro distópico, exploradores buscan el secreto para salvar la humanidad.'
+            },
+            {
+                id: '2',
+                title: 'El Caballero de la Noche',
+                category: 'peliculas',
+                genre: 'accion',
+                year: '2023',
+                badge: 'DC Studio',
+                poster: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=500&q=80',
+                desc: 'Un héroe en las sombras lucha contra el caos sembrado por una mente criminal.'
+            },
+            {
+                id: '3',
+                title: 'Universo Estelar 2',
+                category: 'peliculas',
+                genre: 'accion',
+                year: '2024',
+                badge: 'Warner Cinema',
+                poster: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=500&q=80',
+                desc: 'Una épica travesía galáctica a través de mundos desconocidos y batallas espectaculares.'
+            },
+            {
+                id: '4',
+                title: 'Aventuras Interdimensionales',
+                category: 'series',
+                genre: 'animacion',
+                year: '2023',
+                badge: 'Animación',
+                poster: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=500&q=80',
+                desc: 'Locas travesías científicas a través del multiverso cargadas de humor.'
+            },
+            {
+                id: '5',
+                title: 'Gran Final de Campeones',
+                category: 'peliculas',
+                genre: 'deportes',
+                year: '2024',
+                badge: 'Deportes En Vivo',
+                poster: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=500&q=80',
+                desc: 'La definición más esperada del fútbol continental transmitida en ultra alta definición.'
+            },
+            {
+                id: '6',
+                title: 'Noches de Neón',
+                category: 'series',
+                genre: 'drama',
+                year: '2024',
+                badge: 'Más Vista',
+                poster: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=500&q=80',
+                desc: 'Dramas entrelazados de la juventud moderna en la gran metrópolis.'
+            }
+        ];
+
+        // State Management
+        let currentUser = JSON.parse(localStorage.getItem('palomita_user') || 'null');
+        let userBookmarks = JSON.parse(localStorage.getItem('palomita_bookmarks') || '[]');
+
+        // Initialize App View State
+        window.onload = function() {
+            if (currentUser) {
+                showMainAppView();
+            } else {
+                showPublicLanding();
+            }
+        };
+
+        function showPublicLanding() {
+            document.getElementById('publicLanding').style.display = 'block';
+            document.getElementById('mainAppView').style.display = 'none';
+            document.getElementById('appNavLinks').style.display = 'none';
+            document.getElementById('appSearchBar').style.display = 'none';
+            document.getElementById('userProfileBadge').style.display = 'none';
+            document.getElementById('publicNavButtons').style.display = 'flex';
+        }
+
+        function showMainAppView() {
+            document.getElementById('publicLanding').style.display = 'none';
+            document.getElementById('mainAppView').style.display = 'block';
+            document.getElementById('appNavLinks').style.display = 'flex';
+            document.getElementById('appSearchBar').style.display = 'flex';
+            document.getElementById('userProfileBadge').style.display = 'flex';
+            document.getElementById('publicNavButtons').style.display = 'none';
+
+            // Update user badge
+            document.getElementById('badgeUserName').innerText = currentUser.name || 'Usuario';
+            document.getElementById('badgeAvatarLetter').innerText = (currentUser.name || 'U').charAt(0).toUpperCase();
+            document.getElementById('modalProfileName').innerText = currentUser.name || 'Usuario';
+            document.getElementById('modalProfileLetter').innerText = (currentUser.name || 'U').charAt(0).toUpperCase();
+
+            renderCatalogRows();
+        }
+
+        function handleLogoClick() {
+            if (currentUser) {
+                filterAppCategory('all');
+            } else {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        // Render Media Rows
+        function renderCatalogRows() {
+            const trendingRow = document.getElementById('trendingRow');
+            const actionRow = document.getElementById('actionRow');
+            const seriesRow = document.getElementById('seriesRow');
+
+            trendingRow.innerHTML = '';
+            actionRow.innerHTML = '';
+            seriesRow.innerHTML = '';
+
+            mediaCatalog.forEach(item => {
+                const isBookmarked = userBookmarks.includes(item.id);
+                const cardHtml = `
+                    <div class="media_card" onclick="openVideoPlayer('${item.title}')">
+                        <button class="btn_bookmark_card" onclick="toggleBookmark(event, '${item.id}')">
+                            <i class="fa-${isBookmarked ? 'solid' : 'regular'} fa-bookmark"></i>
+                        </button>
+                        <span class="card_tag">${item.badge}</span>
+                        <img src="${item.poster}" class="media_poster" alt="${item.title}">
+                        <div class="media_info">
+                            <div class="media_title">${item.title}</div>
+                            <div class="media_meta">
+                                <span>${item.year}</span>
+                                <span class="meta_badge">4K</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                trendingRow.innerHTML += cardHtml;
+                if (item.genre === 'accion') actionRow.innerHTML += cardHtml;
+                if (item.category === 'series') seriesRow.innerHTML += cardHtml;
+            });
+        }
+
+        // Bookmark Toggle Logic
+        function toggleBookmark(e, id) {
+            e.stopPropagation();
+            if (userBookmarks.includes(id)) {
+                userBookmarks = userBookmarks.filter(item => item !== id);
+            } else {
+                userBookmarks.push(id);
+            }
+            localStorage.setItem('palomita_bookmarks', JSON.stringify(userBookmarks));
+            renderCatalogRows();
+        }
+
+        function toggleHeroBookmark() {
+            const btn = document.getElementById('heroBookmarkBtn');
+            if (btn.innerHTML.includes('fa-plus')) {
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> En Mi Lista';
+            } else {
+                btn.innerHTML = '<i class="fa-solid fa-plus"></i> Mi Lista';
+            }
+        }
+
+        // Category Filter
+        function filterAppCategory(cat, e) {
+            if (e) {
+                document.querySelectorAll('#appNavLinks a').forEach(a => a.classList.remove('active'));
+                e.target.classList.add('active');
+            }
+
+            const titleEl = document.getElementById('mainCatalogTitle');
+            const trendingRow = document.getElementById('trendingRow');
+            trendingRow.innerHTML = '';
+
+            let filtered = mediaCatalog;
+
+            if (cat === 'peliculas') {
+                titleEl.innerText = 'Películas Exclusivas';
+                filtered = mediaCatalog.filter(i => i.category === 'peliculas');
+            } else if (cat === 'series') {
+                titleEl.innerText = 'Séries Destacadas';
+                filtered = mediaCatalog.filter(i => i.category === 'series');
+            } else if (cat === 'mi_lista') {
+                titleEl.innerText = 'Mi Lista Guardada';
+                filtered = mediaCatalog.filter(i => userBookmarks.includes(i.id));
+            } else {
+                titleEl.innerText = 'Tendencias Ahora';
+            }
+
+            if (filtered.length === 0) {
+                trendingRow.innerHTML = '<p style="padding:20px; color:var(--text-muted);">No hay títulos guardados en esta sección.</p>';
+                return;
+            }
+
+            filtered.forEach(item => {
+                const isBookmarked = userBookmarks.includes(item.id);
+                trendingRow.innerHTML += `
+                    <div class="media_card" onclick="openVideoPlayer('${item.title}')">
+                        <button class="btn_bookmark_card" onclick="toggleBookmark(event, '${item.id}')">
+                            <i class="fa-${isBookmarked ? 'solid' : 'regular'} fa-bookmark"></i>
+                        </button>
+                        <span class="card_tag">${item.badge}</span>
+                        <img src="${item.poster}" class="media_poster" alt="${item.title}">
+                        <div class="media_info">
+                            <div class="media_title">${item.title}</div>
+                            <div class="media_meta">
+                                <span>${item.year}</span>
+                                <span class="meta_badge">4K</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // Live Search Input Handler
+        function handleSearch() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const trendingRow = document.getElementById('trendingRow');
+            const titleEl = document.getElementById('mainCatalogTitle');
+
+            if (!query) {
+                filterAppCategory('all');
+                return;
+            }
+
+            titleEl.innerText = `Resultados para: "${query}"`;
+            trendingRow.innerHTML = '';
+
+            const results = mediaCatalog.filter(i => i.title.toLowerCase().includes(query) || i.desc.toLowerCase().includes(query));
+
+            if (results.length === 0) {
+                trendingRow.innerHTML = '<p style="padding:20px; color:var(--text-muted);">No se encontraron títulos relacionados.</p>';
+                return;
+            }
+
+            results.forEach(item => {
+                const isBookmarked = userBookmarks.includes(item.id);
+                trendingRow.innerHTML += `
+                    <div class="media_card" onclick="openVideoPlayer('${item.title}')">
+                        <button class="btn_bookmark_card" onclick="toggleBookmark(event, '${item.id}')">
+                            <i class="fa-${isBookmarked ? 'solid' : 'regular'} fa-bookmark"></i>
+                        </button>
+                        <span class="card_tag">${item.badge}</span>
+                        <img src="${item.poster}" class="media_poster" alt="${item.title}">
+                        <div class="media_info">
+                            <div class="media_title">${item.title}</div>
+                            <div class="media_meta">
+                                <span>${item.year}</span>
+                                <span class="meta_badge">4K</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // Subscription Plans Billing Switcher
+        function toggleBilling(type) {
+            const btnMonthly = document.getElementById('btnMonthly');
+            const btnAnnual = document.getElementById('btnAnnual');
+
+            const priceMobile = document.getElementById('priceMobile');
+            const priceStandard = document.getElementById('priceStandard');
+            const pricePremium = document.getElementById('pricePremium');
+
+            if (type === 'annual') {
+                btnAnnual.classList.add('active');
+                btnMonthly.classList.remove('active');
+
+                priceMobile.innerHTML = '$2.99 <span class="plan_period">/mes (facturado anualmente)</span>';
+                priceStandard.innerHTML = '$5.39 <span class="plan_period">/mes (facturado anualmente)</span>';
+                pricePremium.innerHTML = '$7.79 <span class="plan_period">/mes (facturado anualmente)</span>';
+            } else {
+                btnMonthly.classList.add('active');
+                btnAnnual.classList.remove('active');
+
+                priceMobile.innerHTML = '$4.99 <span class="plan_period">/mes</span>';
+                priceStandard.innerHTML = '$8.99 <span class="plan_period">/mes</span>';
+                pricePremium.innerHTML = '$12.99 <span class="plan_period">/mes</span>';
+            }
+        }
+
+        // FAQ Accordion Toggle
+        function toggleFaq(element) {
+            element.classList.toggle('active');
+        }
+
+        // Modals Controller
+        function openModal(id) {
+            document.getElementById(id).classList.add('active');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        function selectPlanAndRegister(planName) {
+            document.getElementById('regPlan').value = planName;
+            openModal('registerModal');
+        }
+
+        // Authentication Handlers
+        function handleRegisterSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('regName').value;
+            const email = document.getElementById('regEmail').value;
+            const plan = document.getElementById('regPlan').value;
+
+            currentUser = { name, email, plan };
+            localStorage.setItem('palomita_user', JSON.stringify(currentUser));
+            closeModal('registerModal');
+            showMainAppView();
+        }
+
+        function handleLoginSubmit(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const name = email.split('@')[0];
+
+            currentUser = { name, email, plan: 'Estándar' };
+            localStorage.setItem('palomita_user', JSON.stringify(currentUser));
+            closeModal('loginModal');
+            showMainAppView();
+        }
+
+        function logoutUser() {
+            currentUser = null;
+            localStorage.removeItem('palomita_user');
+            closeModal('profileModal');
+            showPublicLanding();
+        }
+
+        function selectProfile(profileName) {
+            closeModal('profileModal');
+            document.getElementById('badgeUserName').innerText = profileName;
+            document.getElementById('badgeAvatarLetter').innerText = profileName.charAt(0);
+        }
+
+        // Custom Video Player Controller
+        function openVideoPlayer(title) {
+            const playerModal = document.getElementById('playerModal');
+            const video = document.getElementById('mainVideoElement');
+            const videoTitleText = document.getElementById('videoTitleText');
+
+            videoTitleText.innerText = `Reproduciendo: ${title}`;
+            playerModal.classList.add('active');
+            video.play();
+            updatePlayIcon();
+        }
+
+        function playCurrentHeroVideo() {
+            const title = document.getElementById('appHeroTitle').innerText;
+            openVideoPlayer(title);
+        }
+
+        function closeVideoPlayer() {
+            const playerModal = document.getElementById('playerModal');
+            const video = document.getElementById('mainVideoElement');
+
+            video.pause();
+            playerModal.classList.remove('active');
+        }
+
+        function togglePlayPause() {
+            const video = document.getElementById('mainVideoElement');
+            if (video.paused) {
+                video.play();
+            } else {
+                video.pause();
+            }
+            updatePlayIcon();
+        }
+
+        function updatePlayIcon() {
+            const video = document.getElementById('mainVideoElement');
+            const playIcon = document.getElementById('playIcon');
+            if (video.paused) {
+                playIcon.className = 'fa-solid fa-play';
+            } else {
+                playIcon.className = 'fa-solid fa-pause';
+            }
+        }
+
+        function toggleMute() {
+            const video = document.getElementById('mainVideoElement');
+            const volumeIcon = document.getElementById('volumeIcon');
+            video.muted = !video.muted;
+            if (video.muted) {
+                volumeIcon.className = 'fa-solid fa-volume-xmark';
+            } else {
+                volumeIcon.className = 'fa-solid fa-volume-high';
+            }
+        }
+
+        function toggleFullscreen() {
+            const videoContainer = document.querySelector('.video_player_container');
+            if (!document.fullscreenElement) {
+                videoContainer.requestFullscreen();
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        // Update progress bar dynamically
+        const video = document.getElementById('mainVideoElement');
+        video.ontimeupdate = function() {
+            const progressBar = document.getElementById('videoProgressBar');
+            const percentage = (video.currentTime / video.duration) * 100;
+            progressBar.style.width = `${percentage}%`;
+        };
+
+        function seekVideo(e) {
+            const bar = e.currentTarget;
+            const clickPosition = e.clientX - bar.getBoundingClientRect().left;
+            const percentage = clickPosition / bar.clientWidth;
+            video.currentTime = percentage * video.duration;
+        }
+    </script>
+</body>
+</html>
