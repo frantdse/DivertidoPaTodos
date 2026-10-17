@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DivertidoPaTodos - Portal Hub & Launcher de Entretenimiento</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Poppins:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            glow: '#818cf8',
+                        },
+                        glass: {
+                            light: 'rgba(255, 255, 255, 0.65)',
+                            dark: 'rgba(15, 23, 42, 0.65)',
+                            borderLight: 'rgba(255, 255, 255, 0.4)',
+                            borderDark: 'rgba(255, 255, 255, 0.08)'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Montserrat', 'sans-serif'],
+                        heading: ['Poppins', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'glass-sm': '0 8px 32px 0 rgba(31, 38, 135, 0.07)',
+                        'glass-md': '0 8px 32px 0 rgba(0, 0, 0, 0.2)',
+                        'glow': '0 0 25px -5px rgba(99, 102, 241, 0.5)'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Tone.js for Audio FX -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+
+    <style>
+        /* Glassmorphism Styles */
+        .glass-panel {
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+        
+        .dark .glass-panel {
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .light .glass-panel {
+            background: rgba(255, 255, 255, 0.75);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+
+        /* Animated Aurora Background Effect */
+        .aurora-bg {
+            background: radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.25) 0%, transparent 40%),
+                        radial-gradient(circle at 90% 80%, rgba(236, 72, 153, 0.2) 0%, transparent 40%),
+                        radial-gradient(circle at 50% 50%, rgba(14, 165, 233, 0.15) 0%, transparent 50%);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #6366f155;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6366f188;
+        }
+
+        /* Pulse glow animation */
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.8; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.03); }
+        }
+        .animate-pulse-glow {
+            animation: pulseGlow 3s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 transition-colors duration-300 min-h-screen font-sans aurora-bg flex flex-col justify-between overflow-x-hidden">
+
+    <!-- NAVIGATION HEADER -->
+    <header class="sticky top-0 z-50 w-full glass-panel border-b border-slate-800/50 px-4 lg:px-8 py-3.5 transition-all">
+        <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
+            
+            <!-- Brand Logo -->
+            <a href="#" class="flex items-center gap-3 group">
+                <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/30 group-hover:scale-105 transition-transform">
+                    <i class="fa-solid fa-gamepad text-xl"></i>
+                </div>
+                <div>
+                    <span class="font-heading font-extrabold text-xl lg:text-2xl tracking-tight bg-gradient-to-r from-indigo-400 via-purple-300 to-pink-400 bg-clip-text text-transparent">
+                        DivertidoPaTodos
+                    </span>
+                    <span class="hidden sm:inline-block text-[10px] uppercase font-bold tracking-widest px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 ml-2">
+                        HUB v2.5
+                    </span>
+                </div>
+            </a>
+
+            <!-- Navigation Links (Desktop) -->
+            <nav class="hidden md:flex items-center gap-6 text-sm font-medium text-slate-300">
+                <a href="#proyectos" class="hover:text-indigo-400 transition-colors flex items-center gap-1.5"><i class="fa-solid fa-cubes text-xs"></i> Proyectos</a>
+                <a href="#novedades" class="hover:text-indigo-400 transition-colors flex items-center gap-1.5"><i class="fa-solid fa-bullhorn text-xs"></i> Novedades</a>
+                <a href="#mini-widgets" class="hover:text-indigo-400 transition-colors flex items-center gap-1.5"><i class="fa-solid fa-wand-magic-sparkles text-xs"></i> Interactivo</a>
+            </nav>
+
+            <!-- Actions & Theme Toggle -->
+            <div class="flex items-center gap-3">
+                <!-- Theme Switcher Button -->
+                <button id="themeToggleBtn" onclick="toggleTheme()" class="p-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 text-slate-300 border border-slate-700/50 transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500" title="Cambiar tema">
+                    <i class="fa-solid fa-sun text-yellow-400 dark:hidden"></i>
+                    <i class="fa-solid fa-moon text-indigo-300 hidden dark:block"></i>
+                </button>
+
+                <!-- Sound FX Toggle Button -->
+                <button id="soundToggleBtn" onclick="toggleSound()" class="p-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 text-indigo-400 border border-slate-700/50 transition-all" title="Efectos de sonido">
+                    <i class="fa-solid fa-volume-high" id="soundIcon"></i>
+                </button>
+
+                <!-- Random Roulette Button -->
+                <button onclick="launchRandomProject()" class="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-600 hover:to-rose-700 text-white font-semibold text-xs tracking-wide shadow-lg shadow-pink-500/25 active:scale-95 transition-all">
+                    <i class="fa-solid fa-dice text-sm animate-spin-slow"></i>
+                    <span>SORPRÉNDEME</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO SECTION & SEARCH BANNER -->
+    <section class="relative pt-12 pb-10 px-4 lg:px-8 overflow-hidden">
+        <div class="max-w-5xl mx-auto text-center space-y-6">
+            
+            <!-- Hero Pill Badge -->
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 text-xs font-semibold backdrop-blur-md animate-pulse">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                <span>Portal de Inicio & Launcher Unificado</span>
+            </div>
+
+            <!-- Hero Headline -->
+            <h1 class="font-heading text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-tight">
+                El Portal Definitivo de <br class="hidden sm:block"/>
+                <span class="bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">Entretenimiento & TV</span>
+            </h1>
+
+            <p class="text-slate-400 text-sm sm:text-base max-w-2xl mx-auto font-normal">
+                Accede instantáneamente a tus plataformas web favoritas: juegos geográficos, televisión peruana en vivo, cartelera de cine y canal comunitario en streaming.
+            </p>
+
+            <!-- Search Bar & Filters Container -->
+            <div class="max-w-2xl mx-auto pt-4 space-y-4">
+                <!-- Live Search Box -->
+                <div class="relative">
+                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-lg"></i>
+                    <input 
+                        type="text" 
+                        id="searchInput" 
+                        oninput="filterCards()" 
+                        placeholder="Buscar por nombre (ej: AreaGuesser, DirectoPE, Películas, TV)..."
+                        class="w-full pl-12 pr-12 py-3.5 rounded-2xl bg-slate-900/90 border border-slate-700/60 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm shadow-xl transition-all"
+                    >
+                    <button id="clearSearchBtn" onclick="clearSearch()" class="hidden absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white">
+                        <i class="fa-solid fa-circle-xmark"></i>
+                    </button>
+                </div>
+
+                <!-- Category Filter Pills -->
+                <div class="flex flex-wrap items-center justify-center gap-2 pt-2" id="filterPills">
+                    <button onclick="setCategory('todos', this)" class="filter-pill active px-4 py-1.5 rounded-xl text-xs font-semibold bg-indigo-600 text-white shadow-md shadow-indigo-600/30 transition-all">
+                        <i class="fa-solid fa-border-all mr-1"></i> Todos
+                    </button>
+                    <button onclick="setCategory('juegos', this)" class="filter-pill px-4 py-1.5 rounded-xl text-xs font-semibold bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700/50 transition-all">
+                        <i class="fa-solid fa-gamepad mr-1 text-emerald-400"></i> Juegos
+                    </button>
+                    <button onclick="setCategory('tv', this)" class="filter-pill px-4 py-1.5 rounded-xl text-xs font-semibold bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700/50 transition-all">
+                        <i class="fa-solid fa-tv mr-1 text-red-400"></i> TV en Vivo
+                    </button>
+                    <button onclick="setCategory('cine', this)" class="filter-pill px-4 py-1.5 rounded-xl text-xs font-semibold bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700/50 transition-all">
+                        <i class="fa-solid fa-film mr-1 text-amber-400"></i> Cine & Series
+                    </button>
+                    <button onclick="setCategory('streaming', this)" class="filter-pill px-4 py-1.5 rounded-xl text-xs font-semibold bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700/50 transition-all">
+                        <i class="fa-solid fa-tower-broadcast mr-1 text-cyan-400"></i> Archivo & Emisión
+                    </button>
+                </div>
+            </div>
+
+            <!-- Global Quick Stats Banner -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-3xl mx-auto pt-6 text-left">
+                <div class="glass-panel p-3 rounded-2xl border border-slate-800/80 flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+                        <i class="fa-solid fa-users text-base"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs text-slate-400 font-medium">Jugadores Activos</div>
+                        <div class="text-base font-bold text-slate-100" id="livePlayersCount">1,842</div>
+                    </div>
+                </div>
+
+                <div class="glass-panel p-3 rounded-2xl border border-slate-800/80 flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 flex items-center justify-center shrink-0">
+                        <i class="fa-solid fa-signal text-base"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs text-slate-400 font-medium">Canales HD</div>
+                        <div class="text-base font-bold text-slate-100">18 en línea</div>
+                    </div>
+                </div>
+
+                <div class="glass-panel p-3 rounded-2xl border border-slate-800/80 flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center shrink-0">
+                        <i class="fa-solid fa-clapperboard text-base"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs text-slate-400 font-medium">Estrenos Cine</div>
+                        <div class="text-base font-bold text-slate-100">450+ Títulos</div>
+                    </div>
+                </div>
+
+                <div class="glass-panel p-3 rounded-2xl border border-slate-800/80 flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center shrink-0">
+                        <i class="fa-solid fa-bolt text-base"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs text-slate-400 font-medium">Estado Hub</div>
+                        <div class="text-base font-bold text-emerald-400 flex items-center gap-1">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400"></span> 99.9%
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- MAIN PROJECTS GRID (LAUNCHER CARDS) -->
+    <main id="proyectos" class="max-w-7xl mx-auto px-4 lg:px-8 py-8 w-full">
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="font-heading text-2xl font-bold text-white flex items-center gap-2">
+                <i class="fa-solid fa-rocket text-indigo-400"></i> Proyectos Principales
+            </h2>
+            <span class="text-xs text-slate-400 font-medium" id="matchingCount">Mostrando 4 de 4 proyectos</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="projectsGrid">
+
+            <!-- 1. AREAGUESSER CARD -->
+            <article data-category="juegos" data-title="areaguesser juegos geografia mapas trivia" class="project-card glass-panel rounded-3xl overflow-hidden border border-slate-800 hover:border-emerald-500/40 transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between group">
+                <div>
+                    <!-- Header Banner -->
+                    <div class="relative h-48 bg-gradient-to-r from-emerald-900/60 via-slate-900 to-teal-950 p-6 flex flex-col justify-between overflow-hidden">
+                        <!-- Decorative background SVG Map pattern -->
+                        <div class="absolute inset-0 opacity-15 pointer-events-none">
+                            <svg class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                                <path d="M0,0 Q50,20 100,0 L100,100 Q50,80 0,100 Z" fill="none" stroke="currentColor" stroke-width="0.5" class="text-emerald-400"/>
+                            </svg>
+                        </div>
+
+                        <!-- Top Status & Badges -->
+                        <div class="relative z-10 flex items-center justify-between">
+                            <span class="px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
+                                <i class="fa-solid fa-earth-americas"></i> Geografía & Quiz
+                            </span>
+                            <span class="px-2.5 py-1 rounded-full bg-slate-900/80 border border-slate-700 text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+                                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                                <span id="agPlayers">1,420</span> Jugando
+                            </span>
+                        </div>
+
+                        <!-- Title & Subtitle -->
+                        <div class="relative z-10">
+                            <h3 class="font-heading text-2xl font-black text-white group-hover:text-emerald-400 transition-colors flex items-center gap-2">
+                                AreaGuesser <i class="fa-solid fa-arrow-up-right-from-square text-xs opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                            </h3>
+                            <p class="text-xs text-slate-300 font-medium">Adivina la ubicación exacta, departamentos o distritos en mapas interactivos.</p>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Region Selector & Preview -->
+                    <div class="p-6 space-y-4">
+                        <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Seleccionar Mapa por Defecto</div>
+                        <div class="grid grid-cols-4 gap-2" id="agRegionSelector">
+                            <button onclick="selectAGRegion('latam', this)" class="region-btn active px-2 py-2 rounded-xl bg-emerald-600/30 border border-emerald-500/50 text-emerald-300 text-xs font-bold text-center transition-all">
+                                🌎 LatAm
+                            </button>
+                            <button onclick="selectAGRegion('peru', this)" class="region-btn px-2 py-2 rounded-xl bg-slate-800/80 border border-slate-700 text-slate-300 hover:bg-slate-700 text-xs font-bold text-center transition-all">
+                                🇵🇪 Perú
+                            </button>
+                            <button onclick="selectAGRegion('argentina', this)" class="region-btn px-2 py-2 rounded-xl bg-slate-800/80 border border-slate-700 text-slate-300 hover:bg-slate-700 text-xs font-bold text-center transition-all">
+                                🇦🇷 Argentina
+                            </button>
+                            <button onclick="selectAGRegion('global', this)" class="region-btn px-2 py-2 rounded-xl bg-slate-800/80 border border-slate-700 text-slate-300 hover:bg-slate-700 text-xs font-bold text-center transition-all">
+                                🌍 Mundial
+                            </button>
+                        </div>
+
+                        <!-- Mini Quiz Widget embedded in card -->
+                        <div class="p-3.5 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-2">
+                            <div class="flex items-center justify-between text-xs text-slate-400">
+                                <span><i class="fa-solid fa-lightbulb text-amber-400"></i> Desafío Rápido:</span>
+                                <span class="text-emerald-400 font-bold" id="agQuizFeedback">¿Listo?</span>
+                            </div>
+                            <p class="text-xs text-slate-200 font-medium" id="agQuizQuestion">¿Cuál es la capital del Departamento de Cusco?</p>
+                            <div class="grid grid-cols-2 gap-2 pt-1" id="agQuizOptions">
+                                <button onclick="answerAGQuiz(false)" class="py-1.5 px-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300">Arequipa</button>
+                                <button onclick="answerAGQuiz(true)" class="py-1.5 px-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300">Cusco</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Launch Action Bar -->
+                <div class="p-6 pt-0 flex items-center gap-3">
+                    <a href="areaguesser.html" onclick="playLaunchSound()" class="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-slate-950 font-bold text-sm text-center shadow-lg shadow-emerald-500/20 active:scale-95 transition-all flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-gamepad text-base"></i> JUGAR AHORA
+                    </a>
+                    <button onclick="openModal('areaguesser')" class="p-3 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700 transition-all" title="Detalles del proyecto">
+                        <i class="fa-solid fa-circle-info"></i>
+                    </button>
+                </div>
+            </article>
+
+            <!-- 2. DIRECTOPE CARD -->
+            <article data-category="tv" data-title="directope tv en vivo canales señal peru noticias en directo" class="project-card glass-panel rounded-3xl overflow-hidden border border-slate-800 hover:border-red-500/40 transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between group">
+                <div>
+                    <!-- Header Banner -->
+                    <div class="relative h-48 bg-gradient-to-r from-red-950/80 via-slate-900 to-rose-950 p-6 flex flex-col justify-between overflow-hidden">
+                        <!-- Background Screen Pattern -->
+                        <div class="absolute inset-0 bg-[radial-gradient(#ef4444_1px,transparent_1px)] [background-size:16px_16px] opacity-10"></div>
+
+                        <!-- Top Live Indicator -->
+                        <div class="relative z-10 flex items-center justify-between">
+                            <span class="px-3 py-1 rounded-full bg-red-600 text-white text-xs font-black tracking-widest uppercase flex items-center gap-2 animate-pulse">
+                                <span class="w-2 h-2 rounded-full bg-white"></span> EN VIVO
+                            </span>
+                            <span class="px-2.5 py-1 rounded-full bg-slate-900/80 border border-slate-700 text-xs font-semibold text-slate-300">
+                                <i class="fa-solid fa-tv text-red-400 mr-1"></i> Seńal Abierta
+                            </span>
+                        </div>
+
+                        <!-- Title & Subtitle -->
+                        <div class="relative z-10">
+                            <h3 class="font-heading text-2xl font-black text-white group-hover:text-red-400 transition-colors flex items-center gap-2">
+                                DirectoPE <i class="fa-solid fa-arrow-up-right-from-square text-xs opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                            </h3>
+                            <p class="text-xs text-slate-300 font-medium">Televisión peruana en vivo sin cortes, noticias, entretenimiento y deportes.</p>
+                        </div>
+                    </div>
+
+                    <!-- Channel List Quick Preview -->
+                    <div class="p-6 space-y-4">
+                        <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Canales Populares Ahora</div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800 flex items-center gap-2.5">
+                                <div class="w-7 h-7 rounded-lg bg-red-500/20 text-red-400 font-bold text-xs flex items-center justify-center">ATV</div>
+                                <div class="truncate">
+                                    <div class="text-xs font-bold text-slate-200">América TV</div>
+                                    <div class="text-[10px] text-emerald-400 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Noticiero Central</div>
+                                </div>
+                            </div>
+                            <div class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800 flex items-center gap-2.5">
+                                <div class="w-7 h-7 rounded-lg bg-purple-500/20 text-purple-400 font-bold text-xs flex items-center justify-center">LAT</div>
+                                <div class="truncate">
+                                    <div class="text-xs font-bold text-slate-200">Latina TV</div>
+                                    <div class="text-[10px] text-emerald-400 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Magacín de la Tarde</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Current Broadcast Widget -->
+                        <div class="p-3.5 rounded-2xl bg-gradient-to-r from-red-950/30 to-slate-900 border border-red-500/20 flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <i class="fa-solid fa-circle-play text-red-500 text-xl animate-pulse"></i>
+                                <div>
+                                    <div class="text-[10px] text-slate-400 uppercase font-semibold">Destacado Transmitiendo</div>
+                                    <div class="text-xs font-bold text-white">ATV Noticias Edición Noche HD</div>
+                                </div>
+                            </div>
+                            <span class="text-[10px] px-2 py-1 rounded bg-red-500/20 text-red-300 font-mono">1080p</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Launch Action Bar -->
+                <div class="p-6 pt-0 flex items-center gap-3">
+                    <a href="directope.html" onclick="playLaunchSound()" class="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white font-bold text-sm text-center shadow-lg shadow-red-600/20 active:scale-95 transition-all flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-play text-xs"></i> VER TV EN VIVO
+                    </a>
+                    <button onclick="openModal('directope')" class="p-3 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700 transition-all" title="Detalles del proyecto">
+                        <i class="fa-solid fa-circle-info"></i>
+                    </button>
+                </div>
+            </article>
+
+            <!-- 3. PALOMITAPLUS CARD -->
+            <article data-category="cine" data-title="palomitaplus cine peliculas series estrenos cartelera trailer" class="project-card glass-panel rounded-3xl overflow-hidden border border-slate-800 hover:border-amber-500/40 transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between group">
+                <div>
+                    <!-- Header Banner -->
+                    <div class="relative h-48 bg-gradient-to-r from-amber-950/70 via-slate-900 to-yellow-950 p-6 flex flex-col justify-between overflow-hidden">
+                        <div class="relative z-10 flex items-center justify-between">
+                            <span class="px-3 py-1 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-300 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
+                                <i class="fa-solid fa-popcorn"></i> Cine & Cartelera
+                            </span>
+                            <span class="px-2.5 py-1 rounded-full bg-slate-900/80 border border-slate-700 text-xs font-semibold text-amber-400">
+                                <i class="fa-solid fa-star mr-1"></i> Top Tendencia
+                            </span>
+                        </div>
+
+                        <!-- Title & Subtitle -->
+                        <div class="relative z-10">
+                            <h3 class="font-heading text-2xl font-black text-white group-hover:text-amber-400 transition-colors flex items-center gap-2">
+                                PalomitaPlus <i class="fa-solid fa-arrow-up-right-from-square text-xs opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                            </h3>
+                            <p class="text-xs text-slate-300 font-medium">Catálogo interactivo de películas, sinopsis, recomendaciones y tráilers.</p>
+                        </div>
+                    </div>
+
+                    <!-- Movie Carousel / Recommendation Preview -->
+                    <div class="p-6 space-y-4">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">¿Qué ver hoy?</span>
+                            <button onclick="getRandomMovieRecommendation()" class="text-xs text-amber-400 hover:underline flex items-center gap-1">
+                                <i class="fa-solid fa-shuffle"></i> Aleatorio
+                            </button>
+                        </div>
+
+                        <!-- Dynamic Movie Recommendation Box -->
+                        <div class="p-3.5 rounded-2xl bg-slate-900/80 border border-slate-800 flex items-center gap-3" id="movieRecommendBox">
+                            <div class="w-12 h-14 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white text-xl font-black shrink-0">
+                                🍿
+                            </div>
+                            <div class="overflow-hidden">
+                                <div class="text-xs font-bold text-white truncate" id="movieTitle">Dune: Parte Dos</div>
+                                <div class="text-[10px] text-amber-400 font-semibold flex items-center gap-1">
+                                    <i class="fa-solid fa-star"></i> 8.6 / 10 • Ciencia Ficción
+                                </div>
+                                <p class="text-[10px] text-slate-400 truncate mt-0.5" id="movieDesc">Paul Atreides se une a Chani y a los Fremen para vengarse.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Launch Action Bar -->
+                <div class="p-6 pt-0 flex items-center gap-3">
+                    <a href="palomitaplus.html" onclick="playLaunchSound()" class="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-slate-950 font-bold text-sm text-center shadow-lg shadow-amber-500/20 active:scale-95 transition-all flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-film text-xs"></i> EXPLORAR CARTELERA
+                    </a>
+                    <button onclick="openModal('palomitaplus')" class="p-3 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700 transition-all" title="Detalles del proyecto">
+                        <i class="fa-solid fa-circle-info"></i>
+                    </button>
+                </div>
+            </article>
+
+            <!-- 4. AUSTRAL TV CARD -->
+            <article data-category="streaming" data-title="austral tv canal archivo transmision youtube zapping peru retro" class="project-card glass-panel rounded-3xl overflow-hidden border border-slate-800 hover:border-cyan-500/40 transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between group">
+                <div>
+                    <!-- Header Banner -->
+                    <div class="relative h-48 bg-gradient-to-r from-cyan-950/80 via-slate-900 to-blue-950 p-6 flex flex-col justify-between overflow-hidden">
+                        <div class="relative z-10 flex items-center justify-between">
+                            <span class="px-3 py-1 rounded-full bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
+                                <i class="fa-solid fa-tower-broadcast"></i> Canal & Archivo
+                            </span>
+                            <span class="px-2.5 py-1 rounded-full bg-slate-900/80 border border-slate-700 text-xs font-semibold text-cyan-300">
+                                <i class="fa-solid fa-film"></i> Programación
+                            </span>
+                        </div>
+
+                        <!-- Title & Subtitle -->
+                        <div class="relative z-10">
+                            <h3 class="font-heading text-2xl font-black text-white group-hover:text-cyan-400 transition-colors flex items-center gap-2">
+                                Austral TV <i class="fa-solid fa-arrow-up-right-from-square text-xs opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                            </h3>
+                            <p class="text-xs text-slate-300 font-medium">Canal independiente, archivos de televisión local y zapping retro.</p>
+                        </div>
+                    </div>
+
+                    <!-- Channel Broadcast Highlights -->
+                    <div class="p-6 space-y-4">
+                        <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Secciones Destacadas</div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800">
+                                <div class="text-xs font-bold text-cyan-300"><i class="fa-solid fa-compact-disc text-xs"></i> Archivo Retro</div>
+                                <div class="text-[10px] text-slate-400">Grabaciones y spots de los 90s y 2000s</div>
+                            </div>
+                            <div class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800">
+                                <div class="text-xs font-bold text-cyan-300"><i class="fa-solid fa-satellite text-xs"></i> Zapping PE</div>
+                                <div class="text-[10px] text-slate-400">Recopilatorio de tandas comerciales</div>
+                            </div>
+                        </div>
+
+                        <!-- Interactive YouTube Live Quick Link -->
+                        <div class="p-3.5 rounded-2xl bg-slate-900/80 border border-slate-800 flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <i class="fa-brands fa-youtube text-red-500 text-2xl"></i>
+                                <div>
+                                    <div class="text-xs font-bold text-white">Canal Oficial de Emisión</div>
+                                    <div class="text-[10px] text-slate-400">Archivos en HD y directos especiales</div>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-slate-500 text-xs"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Launch Action Bar -->
+                <div class="p-6 pt-0 flex items-center gap-3">
+                    <a href="australtv.html" onclick="playLaunchSound()" class="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-slate-950 font-bold text-sm text-center shadow-lg shadow-cyan-500/20 active:scale-95 transition-all flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-tv text-xs"></i> VER AUSTRAL TV
+                    </a>
+                    <button onclick="openModal('australtv')" class="p-3 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700 transition-all" title="Detalles del proyecto">
+                        <i class="fa-solid fa-circle-info"></i>
+                    </button>
+                </div>
+            </article>
+
+        </div>
+    </main>
+
+    <!-- INTERACTIVE WIDGETS & TOOLS SECTION -->
+    <section id="mini-widgets" class="max-w-7xl mx-auto px-4 lg:px-8 py-8 w-full">
+        <h2 class="font-heading text-2xl font-bold text-white mb-6 flex items-center gap-2">
+            <i class="fa-solid fa-sliders text-indigo-400"></i> Herramientas e Interacción Rápida
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            
+            <!-- Widget 1: Roulette Launcher -->
+            <div class="glass-panel p-6 rounded-3xl border border-slate-800 space-y-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-pink-500/10 text-pink-400 flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-dice-five"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-sm text-white">Ruleta Sorpresa</h3>
+                        <p class="text-xs text-slate-400">¿No sabes qué jugar o ver hoy?</p>
+                    </div>
+                </div>
+                <div class="p-4 rounded-2xl bg-slate-900/90 border border-slate-800 text-center space-y-3">
+                    <div id="rouletteDisplay" class="text-sm font-bold text-indigo-300">Presiona para girar</div>
+                    <button onclick="spinRoulette()" id="rouletteBtn" class="w-full py-2.5 rounded-xl bg-pink-600 hover:bg-pink-700 text-white font-bold text-xs tracking-wider transition-all">
+                        <i class="fa-solid fa-rotate text-xs mr-1"></i> GIRAR RULETA
+                    </button>
+                </div>
+            </div>
+
+            <!-- Widget 2: Fast Soundboard -->
+            <div class="glass-panel p-6 rounded-3xl border border-slate-800 space-y-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-music"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-sm text-white">Efectos de Audio</h3>
+                        <p class="text-xs text-slate-400">Retroalimentación sonora interactiva</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-3 gap-2">
+                    <button onclick="playSoundFX('coin')" class="py-2.5 px-2 rounded-xl bg-slate-900 hover:bg-indigo-600/30 border border-slate-800 text-xs text-slate-300 font-semibold transition-all">
+                        🪙 Moneda
+                    </button>
+                    <button onclick="playSoundFX('laser')" class="py-2.5 px-2 rounded-xl bg-slate-900 hover:bg-indigo-600/30 border border-slate-800 text-xs text-slate-300 font-semibold transition-all">
+                        ⚡ Laser
+                    </button>
+                    <button onclick="playSoundFX('fanfare')" class="py-2.5 px-2 rounded-xl bg-slate-900 hover:bg-indigo-600/30 border border-slate-800 text-xs text-slate-300 font-semibold transition-all">
+                        🎉 Fanfarria
+                    </button>
+                </div>
+            </div>
+
+            <!-- Widget 3: Quick Feedback / Status -->
+            <div class="glass-panel p-6 rounded-3xl border border-slate-800 space-y-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-server"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-sm text-white">Estado de Servidores</h3>
+                        <p class="text-xs text-slate-400">Verificación global de nodos</p>
+                    </div>
+                </div>
+                <div class="space-y-2 text-xs">
+                    <div class="flex justify-between items-center p-2 rounded-lg bg-slate-900/60">
+                        <span class="text-slate-300">Latencia Servidor PE:</span>
+                        <span class="text-emerald-400 font-mono font-bold">18 ms</span>
+                    </div>
+                    <div class="flex justify-between items-center p-2 rounded-lg bg-slate-900/60">
+                        <span class="text-slate-300">CDN de Video Streaming:</span>
+                        <span class="text-emerald-400 font-mono font-bold">Operativo</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- UPDATES TIMELINE & NOVEDADES -->
+    <section id="novedades" class="max-w-7xl mx-auto px-4 lg:px-8 py-8 w-full">
+        <div class="glass-panel p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-6">
+            <h2 class="font-heading text-xl font-bold text-white flex items-center gap-2">
+                <i class="fa-solid fa-clock-rotate-left text-indigo-400"></i> Últimas Novedades y Actualizaciones
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- Patch Note 1 -->
+                <div class="p-4 rounded-2xl bg-slate-900/70 border border-slate-800 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 text-[10px] font-bold">v2.5 Lanzamiento</span>
+                        <span class="text-[10px] text-slate-500">Hace 2 días</span>
+                    </div>
+                    <h4 class="text-xs font-bold text-white">Lanzamiento del Hub DivertidoPaTodos</h4>
+                    <p class="text-xs text-slate-400">Integración unificada con soporte Glassmorphism y selector con redirección a los proyectos reales.</p>
+                </div>
+
+                <!-- Patch Note 2 -->
+                <div class="p-4 rounded-2xl bg-slate-900/70 border border-slate-800 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="px-2 py-0.5 rounded bg-red-500/20 text-red-400 text-[10px] font-bold">DirectoPE Update</span>
+                        <span class="text-[10px] text-slate-500">Esta semana</span>
+                    </div>
+                    <h4 class="text-xs font-bold text-white">Nuevos Canales HD</h4>
+                    <p class="text-xs text-slate-400">Se agregaron reproducciones con optimización HLS de baja latencia para transmisiones en directo.</p>
+                </div>
+
+                <!-- Patch Note 3 -->
+                <div class="p-4 rounded-2xl bg-slate-900/70 border border-slate-800 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 text-[10px] font-bold">PalomitaPlus</span>
+                        <span class="text-[10px] text-slate-500">Reciente</span>
+                    </div>
+                    <h4 class="text-xs font-bold text-white">Integración Recomendador</h4>
+                    <p class="text-xs text-slate-400">Sugerencias automatizadas según las tendencias más populares del mes.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="glass-panel border-t border-slate-800 mt-12 py-8 px-4 lg:px-8 text-xs text-slate-400">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
+            
+            <div class="space-y-1">
+                <div class="font-heading font-bold text-sm text-slate-200">DivertidoPaTodos Hub</div>
+                <p>© <span id="currentYear"></span> Todos los derechos reservados. Creado para la comunidad.</p>
+            </div>
+
+            <!-- Social Links & Repositories -->
+            <div class="flex items-center gap-4">
+                <a href="https://github.com/frantdse/DivertidoPaTodos" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 transition-all">
+                    <i class="fa-brands fa-github text-sm"></i>
+                    <span>frantdse/DivertidoPaTodos</span>
+                </a>
+                <span class="px-2.5 py-1.5 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 font-semibold flex items-center gap-1.5">
+                    <i class="fa-solid fa-triangle-circle-square"></i> Vercel Powered
+                </span>
+            </div>
+
+        </div>
+    </footer>
+
+    <!-- DETAILS MODAL CONTAINER -->
+    <div id="projectModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden items-center justify-center p-4 transition-all">
+        <div class="glass-panel max-w-lg w-full rounded-3xl border border-slate-800 p-6 space-y-5 relative animate-in fade-in zoom-in duration-200">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white p-2 text-lg">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            
+            <div id="modalContent">
+                <!-- Injected dynamically via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // Sound System State
+        let soundEnabled = true;
+        
+        // Tone.js Synth Initialization for SFX
+        let synth;
+        try {
+            synth = new Tone.Synth().toDestination();
+        } catch(e) {
+            console.log("Audio AudioContext initial state handled");
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const icon = document.getElementById('soundIcon');
+            if(soundEnabled) {
+                icon.className = "fa-solid fa-volume-high";
+            } else {
+                icon.className = "fa-solid fa-volume-xmark text-slate-500";
+            }
+        }
+
+        function playSoundFX(type) {
+            if(!soundEnabled) return;
+            try {
+                Tone.start();
+                if(type === 'coin') {
+                    synth.triggerAttackRelease("B5", "16n");
+                } else if(type === 'laser') {
+                    synth.triggerAttackRelease("E4", "8n");
+                } else if(type === 'fanfare') {
+                    synth.triggerAttackRelease("G5", "8n");
+                } else if(type === 'click') {
+                    synth.triggerAttackRelease("C5", "32n");
+                }
+            } catch(e){}
+        }
+
+        function playLaunchSound() {
+            playSoundFX('fanfare');
+        }
+
+        // Theme Toggle Functionality
+        function toggleTheme() {
+            const html = document.documentElement;
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                html.classList.add('light');
+                document.body.classList.remove('bg-slate-950', 'text-slate-100');
+                document.body.classList.add('bg-slate-100', 'text-slate-900');
+            } else {
+                html.classList.remove('light');
+                html.classList.add('dark');
+                document.body.classList.remove('bg-slate-100', 'text-slate-900');
+                document.body.classList.add('bg-slate-950', 'text-slate-100');
+            }
+            playSoundFX('click');
+        }
+
+        // Search & Filtering Logic
+        let currentCategory = 'todos';
+
+        function setCategory(cat, btn) {
+            currentCategory = cat;
+            document.querySelectorAll('.filter-pill').forEach(p => {
+                p.classList.remove('bg-indigo-600', 'text-white', 'shadow-md', 'shadow-indigo-600/30');
+                p.classList.add('bg-slate-800/80', 'text-slate-300');
+            });
+            btn.classList.remove('bg-slate-800/80', 'text-slate-300');
+            btn.classList.add('bg-indigo-600', 'text-white', 'shadow-md', 'shadow-indigo-600/30');
+            
+            playSoundFX('click');
+            filterCards();
+        }
+
+        function filterCards() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            const cards = document.querySelectorAll('.project-card');
+            const clearBtn = document.getElementById('clearSearchBtn');
+
+            if(query.length > 0) {
+                clearBtn.classList.remove('hidden');
+            } else {
+                clearBtn.classList.add('hidden');
+            }
+
+            let visibleCount = 0;
+
+            cards.forEach(card => {
+                const category = card.getAttribute('data-category');
+                const titleData = card.getAttribute('data-title').toLowerCase();
+
+                const matchesCategory = (currentCategory === 'todos' || category === currentCategory);
+                const matchesSearch = titleData.includes(query);
+
+                if (matchesCategory && matchesSearch) {
+                    card.style.display = "flex";
+                    visibleCount++;
+                } else {
+                    card.style.display = "none";
+                }
+            });
+
+            document.getElementById('matchingCount').innerText = `Mostrando ${visibleCount} de ${cards.length} proyectos`;
+        }
+
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            filterCards();
+        }
+
+        // AreaGuesser Mini Quiz Logic
+        function answerAGQuiz(isCorrect) {
+            const feedback = document.getElementById('agQuizFeedback');
+            if(isCorrect) {
+                feedback.innerText = "¡Correcto! (+100 pts)";
+                feedback.className = "text-emerald-400 font-bold";
+                playSoundFX('coin');
+            } else {
+                feedback.innerText = "¡Incorrecto! Era Cusco";
+                feedback.className = "text-red-400 font-bold";
+                playSoundFX('laser');
+            }
+        }
+
+        function selectAGRegion(region, btn) {
+            document.querySelectorAll('#agRegionSelector .region-btn').forEach(b => {
+                b.className = "region-btn px-2 py-2 rounded-xl bg-slate-800/80 border border-slate-700 text-slate-300 hover:bg-slate-700 text-xs font-bold text-center transition-all";
+            });
+            btn.className = "region-btn active px-2 py-2 rounded-xl bg-emerald-600/30 border border-emerald-500/50 text-emerald-300 text-xs font-bold text-center transition-all";
+            playSoundFX('click');
+        }
+
+        // PalomitaPlus Movie Recommendation Randomizer
+        const moviesList = [
+            { title: "Dune: Parte Dos", rating: "8.6", genre: "Ciencia Ficción", desc: "Paul Atreides se une a Chani y a los Fremen para vengarse." },
+            { title: "Spider-Man: Across the Spider-Verse", rating: "8.7", genre: "Animación / Acción", desc: "Miles Morales viaja a través del Multiverso de Spider-People." },
+            { title: "Oppenheimer", rating: "8.9", genre: "Historia / Drama", desc: "La historia del físico J. Robert Oppenheimer y la bomba atómica." },
+            { title: "Godzilla Minus One", rating: "8.3", genre: "Acción / Kaiju", desc: "Un Japón devastado tras la guerra enfrenta una nueva amenaza colosal." }
+        ];
+
+        function getRandomMovieRecommendation() {
+            const random = moviesList[Math.floor(Math.random() * moviesList.length)];
+            document.getElementById('movieTitle').innerText = random.title;
+            document.getElementById('movieDesc').innerText = random.desc;
+            document.querySelector('#movieRecommendBox .text-amber-400').innerHTML = `<i class="fa-solid fa-star"></i> ${random.rating} / 10 • ${random.genre}`;
+            playSoundFX('click');
+        }
+
+        // Roulette Launcher Widget
+        const projectsList = [
+            { name: "AreaGuesser", url: "areaguesser.html", icon: "🌎" },
+            { name: "DirectoPE (TV en Vivo)", url: "directope.html", icon: "📺" },
+            { name: "PalomitaPlus (Cine)", url: "palomitaplus.html", icon: "🍿" },
+            { name: "Austral TV", url: "australtv.html", icon: "📡" }
+        ];
+
+        function spinRoulette() {
+            const display = document.getElementById('rouletteDisplay');
+            const btn = document.getElementById('rouletteBtn');
+            btn.disabled = true;
+            
+            let count = 0;
+            const interval = setInterval(() => {
+                const randomProj = projectsList[Math.floor(Math.random() * projectsList.length)];
+                display.innerHTML = `${randomProj.icon} <span class="text-white">${randomProj.name}</span>`;
+                playSoundFX('click');
+                count++;
+                
+                if(count > 12) {
+                    clearInterval(interval);
+                    const finalChoice = projectsList[Math.floor(Math.random() * projectsList.length)];
+                    display.innerHTML = `<span class="text-emerald-400 font-extrabold">¡Seleccionado!</span> ${finalChoice.icon} ${finalChoice.name}`;
+                    playSoundFX('fanfare');
+                    btn.disabled = false;
+                    
+                    setTimeout(() => {
+                        window.location.href = finalChoice.url;
+                    }, 1200);
+                }
+            }, 100);
+        }
+
+        function launchRandomProject() {
+            spinRoulette();
+        }
+
+        // Modal Logic
+        const projectModalData = {
+            areaguesser: {
+                title: "AreaGuesser",
+                icon: "fa-earth-americas text-emerald-400",
+                desc: "AreaGuesser es un juego geográfico interactivo de alta precisión donde pones a prueba tus conocimientos sobre mapas, departamentos, provincias y coordenadas de América Latina y el mundo.",
+                features: ["Selección de mapas por región", "Modo multijugador y partidas por tiempo", "Estadísticas en tiempo real"],
+                url: "areaguesser.html"
+            },
+            directope: {
+                title: "DirectoPE",
+                icon: "fa-tv text-red-400",
+                desc: "DirectoPE es la plataforma launcher para ver la televisión peruana e internacional en vivo con alta calidad, reproductor optimizado HLS y lista de canales actualizada.",
+                features: ["Canales en HD sin anuncios invasivos", "Guía de programación en tiempo real", "Soporte para múltiples fuentes de transmisión"],
+                url: "directope.html"
+            },
+            palomitaplus: {
+                title: "PalomitaPlus",
+                icon: "fa-popcorn text-amber-400",
+                desc: "Tu catálogo de cine definitivo. Explora las mejores películas, series en tendencia, recomendaciones inteligentes por estado de ánimo e información detallada de reparto y tráilers.",
+                features: ["Generador de películas aleatorias", "Filtro por género y calificación", "Vista previa de tráilers HD"],
+                url: "palomitaplus.html"
+            },
+            australtv: {
+                title: "Austral TV",
+                icon: "fa-tower-broadcast text-cyan-400",
+                desc: "Canal de televisión independiente y archivo audiovisual interactivo con transmisiones pasadas, zapping de época y contenido cultural exclusivo.",
+                features: ["Emisión de archivos retro", "Reproducción en directo vía streaming", "Biblioteca de videoclips comunitarios"],
+                url: "australtv.html"
+            }
+        };
+
+        function openModal(key) {
+            const data = projectModalData[key];
+            if(!data) return;
+
+            const modal = document.getElementById('projectModal');
+            const content = document.getElementById('modalContent');
+
+            content.innerHTML = `
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-2xl bg-slate-900 flex items-center justify-center text-2xl">
+                        <i class="fa-solid ${data.icon}"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-heading text-xl font-bold text-white">${data.title}</h3>
+                        <span class="text-xs text-indigo-400 font-semibold">Proyecto DivertidoPaTodos</span>
+                    </div>
+                </div>
+                <p class="text-xs text-slate-300 leading-relaxed">${data.desc}</p>
+                <div class="space-y-2">
+                    <div class="text-xs font-bold text-slate-400 uppercase">Características Principales:</div>
+                    <ul class="text-xs text-slate-300 space-y-1">
+                        ${data.features.map(f => `<li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> ${f}</li>`).join('')}
+                    </ul>
+                </div>
+                <div class="pt-2 flex gap-3">
+                    <a href="${data.url}" onclick="playLaunchSound()" class="flex-1 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs text-center transition-all">
+                        IR AL JUEGO / CANAL
+                    </a>
+                    <button onclick="closeModal()" class="py-2.5 px-4 rounded-xl bg-slate-800 text-slate-300 text-xs font-semibold hover:bg-slate-700 transition-all">
+                        Cerrar
+                    </button>
+                </div>
+            `;
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            playSoundFX('click');
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('projectModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        // Live Dynamic Stats Simulator
+        setInterval(() => {
+            const playerElem = document.getElementById('agPlayers');
+            const liveElem = document.getElementById('livePlayersCount');
+            if(playerElem && liveElem) {
+                const current = parseInt(playerElem.innerText.replace(',', ''));
+                const delta = Math.floor(Math.random() * 9) - 4;
+                const newTotal = Math.max(1200, current + delta);
+                playerElem.innerText = newTotal.toLocaleString();
+                liveElem.innerText = (newTotal + 422).toLocaleString();
+            }
+        }, 4000);
+
+        // Initialize Dynamic Year
+        document.getElementById('currentYear').innerText = new Date().getFullYear();
+    </script>
+</body>
+</html>
