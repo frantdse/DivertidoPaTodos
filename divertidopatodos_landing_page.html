@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DivertidoPaTodos - Juegos, TV en Vivo y Entretenimiento</title>
+    
+    <!-- Google Fonts: Montserrat & Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom Tailwind Configuration for Apple Aesthetic + Fonts -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        apple: {
+                            bg: '#f5f5f7',
+                            card: '#ffffff',
+                            text: '#1d1d1f',
+                            secondary: '#86868b',
+                            accent: '#0066cc',
+                            accentHover: '#0077ed',
+                            border: 'rgba(0, 0, 0, 0.08)',
+                            pillBg: 'rgba(0, 0, 0, 0.04)'
+                        }
+                    },
+                    fontFamily: {
+                        heading: ['Poppins', 'sans-serif'],
+                        body: ['Montserrat', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'apple-sm': '0 2px 8px rgba(0, 0, 0, 0.04)',
+                        'apple-card': '0 4px 20px rgba(0, 0, 0, 0.05)',
+                        'apple-hover': '0 14px 32px rgba(0, 0, 0, 0.09)',
+                        'apple-modal': '0 20px 40px rgba(0, 0, 0, 0.14)',
+                    },
+                    borderRadius: {
+                        'apple': '18px',
+                        'apple-lg': '24px',
+                        'apple-pill': '9999px',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            background-color: #f5f5f7;
+            color: #1d1d1f;
+            font-family: 'Montserrat', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        h1, h2, h3, h4, h5, h6, .font-heading {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Glassmorphism Refined Blur Header */
+        .apple-glass {
+            background: rgba(255, 255, 255, 0.82);
+            backdrop-filter: saturate(180%) blur(20px);
+            -webkit-backdrop-filter: saturate(180%) blur(20px);
+        }
+
+        /* Springy Transitions */
+        .apple-transition {
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Ambient Light Glow Blob */
+        .ambient-glow {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.45;
+            pointer-events: none;
+            z-index: 0;
+            animation: floatGlow 14s ease-in-out infinite alternate;
+        }
+
+        @keyframes floatGlow {
+            0% { transform: translate(0px, 0px) scale(1); }
+            50% { transform: translate(25px, -15px) scale(1.06); }
+            100% { transform: translate(-20px, 15px) scale(0.95); }
+        }
+
+        /* Card Hover Elevate */
+        .apple-card-hover {
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.35s ease;
+        }
+        .apple-card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 16px 36px rgba(0, 0, 0, 0.08);
+            border-color: rgba(0, 102, 204, 0.25);
+        }
+
+        input:focus, button:focus {
+            outline: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-blue-100 selection:text-apple-accent relative overflow-x-hidden">
+
+    <!-- Ambient Subtle Soft Light Glows -->
+    <div class="ambient-glow bg-blue-200/50 w-[500px] h-[500px] -top-32 -left-32"></div>
+    <div class="ambient-glow bg-red-100/60 w-[550px] h-[550px] top-80 -right-40"></div>
+    <div class="ambient-glow bg-purple-100/40 w-[450px] h-[450px] bottom-20 left-1/3"></div>
+
+    <!-- Apple-style Navigation Header -->
+    <header class="sticky top-0 z-50 apple-glass border-b border-apple-border apple-transition">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <!-- Brand Logo -->
+            <a href="#" class="flex items-center space-x-3 group">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-gray-900 to-gray-700 text-white flex items-center justify-center font-bold font-heading text-lg shadow-sm group-hover:scale-105 apple-transition">
+                    D
+                </div>
+                <span class="font-bold font-heading text-lg tracking-tight text-apple-text">DivertidoPaTodos</span>
+            </a>
+
+            <!-- Header Badges & Actions -->
+            <div class="flex items-center space-x-3 sm:space-x-4">
+                <!-- Vercel Status Badge -->
+                <a href="https://vercel.com" target="_blank" rel="noopener noreferrer" 
+                   class="flex items-center space-x-2 px-3 py-1.5 rounded-apple-pill bg-emerald-50/90 border border-emerald-200/70 text-xs font-semibold text-emerald-800 hover:bg-emerald-100/80 apple-transition">
+                    <span class="relative flex h-2 w-2">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                    </span>
+                    <i class="fa-solid fa-triangle text-[10px] transform rotate-0"></i>
+                    <span>Vercel</span>
+                </a>
+
+                <!-- GitHub Repo Badge Button -->
+                <a href="https://github.com/frantdse/DivertidoPaTodos" target="_blank" rel="noopener noreferrer" 
+                   class="flex items-center space-x-2 px-3.5 py-1.5 rounded-apple-pill bg-white/80 hover:bg-gray-100 border border-apple-border text-xs font-semibold text-apple-text shadow-apple-sm apple-transition">
+                    <i class="fa-brands fa-github text-sm"></i>
+                    <span class="hidden md:inline">frantdse/DivertidoPaTodos</span>
+                    <span class="md:hidden">GitHub</span>
+                    <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-apple-secondary"></i>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-16 pb-16 flex-grow w-full">
+        
+        <!-- Hero Section -->
+        <section class="text-center max-w-3xl mx-auto mb-14 sm:mb-18">
+            <!-- Subtle Tag -->
+            <div class="inline-flex items-center space-x-2 px-4 py-1.5 rounded-apple-pill bg-white text-apple-secondary text-xs font-semibold mb-6 border border-apple-border shadow-apple-sm">
+                <i class="fa-solid fa-tv text-red-500 text-xs"></i>
+                <span>Juegos, TV e Interactivos LATAM</span>
+            </div>
+
+            <!-- Main Heading -->
+            <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight text-apple-text leading-[1.12] mb-6 font-heading">
+                Entretenimiento y TV en vivo, <span class="bg-gradient-to-r from-red-500 via-purple-600 to-blue-600 bg-clip-text text-transparent">en un solo lugar.</span>
+            </h1>
+
+            <!-- Subtitle -->
+            <p class="text-base sm:text-lg text-apple-secondary font-medium leading-relaxed mb-10 max-w-2xl mx-auto">
+                Explora juegos de geolocalización, canales peruano-latinoamericanos de televisión en vivo y recomendaciones completas de cine y series.
+            </p>
+
+            <!-- Search & Filter Controls Container -->
+            <div class="space-y-5 max-w-2xl mx-auto">
+                <!-- Search Input -->
+                <div class="relative">
+                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-apple-secondary text-sm"></i>
+                    <input type="text" id="searchInput" placeholder="Buscar proyectos, juegos o canales..." 
+                           class="w-full pl-11 pr-10 py-3.5 bg-white border border-apple-border rounded-2xl text-sm font-medium text-apple-text placeholder-apple-secondary/70 shadow-apple-sm focus:border-apple-accent focus:ring-4 focus:ring-blue-500/10 apple-transition">
+                    <button id="clearSearch" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-apple-secondary hover:text-apple-text p-1.5 rounded-full text-xs">
+                        <i class="fa-solid fa-circle-xmark"></i>
+                    </button>
+                </div>
+
+                <!-- Category Pills -->
+                <div class="flex flex-wrap justify-center items-center gap-2" id="filterTabs">
+                    <button data-category="Todos" class="filter-tab active px-4 py-2 rounded-apple-pill text-xs font-semibold apple-transition bg-apple-text text-white shadow-sm">
+                        Todos
+                    </button>
+                    <button data-category="Juegos" class="filter-tab px-4 py-2 rounded-apple-pill text-xs font-semibold apple-transition bg-white text-apple-secondary border border-apple-border hover:bg-gray-50 hover:text-apple-text">
+                        <i class="fa-solid fa-gamepad mr-1.5 text-xs"></i>Juegos
+                    </button>
+                    <button data-category="TV en Vivo" class="filter-tab px-4 py-2 rounded-apple-pill text-xs font-semibold apple-transition bg-white text-apple-secondary border border-apple-border hover:bg-gray-50 hover:text-apple-text">
+                        <i class="fa-solid fa-tv mr-1.5 text-xs"></i>TV en Vivo
+                    </button>
+                    <button data-category="Entretenimiento" class="filter-tab px-4 py-2 rounded-apple-pill text-xs font-semibold apple-transition bg-white text-apple-secondary border border-apple-border hover:bg-gray-50 hover:text-apple-text">
+                        <i class="fa-solid fa-film mr-1.5 text-xs"></i>Entretenimiento
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Projects Grid -->
+        <section id="projectsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+            
+            <!-- Project 1: AreaGuesser -->
+            <article class="project-card apple-card-hover bg-white border border-apple-border rounded-apple-lg p-7 flex flex-col justify-between shadow-apple-card relative overflow-hidden group"
+                     data-category="Juegos" data-title="areaguesser geoguessr geografia juego adivinanza mapas" data-id="areaguesser">
+                <div>
+                    <!-- Top Bar in Card -->
+                    <div class="flex items-center justify-between mb-5">
+                        <div class="w-12 h-12 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 text-xl shadow-xs group-hover:scale-105 apple-transition">
+                            <i class="fa-solid fa-earth-americas"></i>
+                        </div>
+                        <span class="px-3 py-1 rounded-apple-pill text-[11px] font-bold tracking-wide uppercase bg-blue-50 text-blue-700 border border-blue-100">
+                            Juegos
+                        </span>
+                    </div>
+
+                    <!-- Title & Description -->
+                    <h3 class="text-2xl font-bold font-heading text-apple-text tracking-tight mb-2 flex items-center group-hover:text-apple-accent apple-transition">
+                        AreaGuesser
+                    </h3>
+                    <p class="text-xs sm:text-sm text-apple-secondary font-medium leading-relaxed mb-6">
+                        Juego interactivo de adivinanza geográfica en Latinoamérica. Desafía tus conocimientos ubicando regiones y distritos en el mapa.
+                    </p>
+                </div>
+
+                <!-- Footer / Action Link -->
+                <div class="pt-4 border-t border-gray-100 flex items-center justify-between mt-auto">
+                    <button onclick="openPreviewModal('AreaGuesser', 'Juegos / Geografía', 'Demuestra cuánto conoces Latinoamérica. Reconoce imágenes, ubica áreas exactas en el mapa y suma puntos en este desafío interactivo estilo GeoGuessr.', './AreaGuesser/')" 
+                            class="text-xs font-semibold text-apple-secondary hover:text-apple-text apple-transition flex items-center space-x-1.5">
+                        <i class="fa-regular fa-eye"></i>
+                        <span>Vista previa</span>
+                    </button>
+
+                    <a href="./AreaGuesser/" class="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-apple-pill bg-gray-100 group-hover:bg-apple-accent group-hover:text-white text-xs font-semibold text-apple-text apple-transition">
+                        <span>Jugar</span>
+                        <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                    </a>
+                </div>
+            </article>
+
+            <!-- Project 2: DirectoPE -->
+            <article class="project-card apple-card-hover bg-white border border-apple-border rounded-apple-lg p-7 flex flex-col justify-between shadow-apple-card relative overflow-hidden group"
+                     data-category="TV en Vivo" data-title="directope tv television en vivo canales peru latinoamerica streaming señal" data-id="directope">
+                <div>
+                    <!-- Top Bar in Card -->
+                    <div class="flex items-center justify-between mb-5">
+                        <div class="w-12 h-12 rounded-2xl bg-red-50 border border-red-100 flex items-center justify-center text-red-600 text-xl shadow-xs group-hover:scale-105 apple-transition">
+                            <i class="fa-solid fa-tv"></i>
+                        </div>
+                        <span class="px-3 py-1 rounded-apple-pill text-[11px] font-bold tracking-wide uppercase bg-red-50 text-red-700 border border-red-100 flex items-center space-x-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse"></span>
+                            <span>TV en Vivo</span>
+                        </span>
+                    </div>
+
+                    <!-- Title & Description -->
+                    <h3 class="text-2xl font-bold font-heading text-apple-text tracking-tight mb-2 flex items-center group-hover:text-red-600 apple-transition">
+                        DirectoPE
+                    </h3>
+                    <p class="text-xs sm:text-sm text-apple-secondary font-medium leading-relaxed mb-6">
+                        Plataforma de televisión en directo. Acceso directo a canales peruanos y latinoamericanos en vivo, noticias, deportes y transmisiones fluidas.
+                    </p>
+                </div>
+
+                <!-- Footer / Action Link -->
+                <div class="pt-4 border-t border-gray-100 flex items-center justify-between mt-auto">
+                    <button onclick="openPreviewModal('DirectoPE', 'TV en Vivo / Streaming', 'Sintoniza canales peruanos y de la región en señal abierta y digital en tiempo real. Reproductor optimizado para una experiencia fluida sin interrupciones.', './DirectoPE/')" 
+                            class="text-xs font-semibold text-apple-secondary hover:text-apple-text apple-transition flex items-center space-x-1.5">
+                        <i class="fa-regular fa-eye"></i>
+                        <span>Vista previa</span>
+                    </button>
+
+                    <a href="./DirectoPE/" class="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-apple-pill bg-gray-100 group-hover:bg-red-600 group-hover:text-white text-xs font-semibold text-apple-text apple-transition">
+                        <span>Ver TV</span>
+                        <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                    </a>
+                </div>
+            </article>
+
+            <!-- Project 3: PalomitaPlus -->
+            <article class="project-card apple-card-hover bg-white border border-apple-border rounded-apple-lg p-7 flex flex-col justify-between shadow-apple-card relative overflow-hidden group"
+                     data-category="Entretenimiento" data-title="palomitaplus entretenimiento cine series streaming peliculas recomendaciones cartelera" data-id="palomitaplus">
+                <div>
+                    <!-- Top Bar in Card -->
+                    <div class="flex items-center justify-between mb-5">
+                        <div class="w-12 h-12 rounded-2xl bg-purple-50 border border-purple-100 flex items-center justify-center text-purple-600 text-xl shadow-xs group-hover:scale-105 apple-transition">
+                            <i class="fa-solid fa-popcorn"></i>
+                        </div>
+                        <span class="px-3 py-1 rounded-apple-pill text-[11px] font-bold tracking-wide uppercase bg-purple-50 text-purple-700 border border-purple-100">
+                            Cine & Series
+                        </span>
+                    </div>
+
+                    <!-- Title & Description -->
+                    <h3 class="text-2xl font-bold font-heading text-apple-text tracking-tight mb-2 flex items-center group-hover:text-purple-600 apple-transition">
+                        PalomitaPlus
+                    </h3>
+                    <p class="text-xs sm:text-sm text-apple-secondary font-medium leading-relaxed mb-6">
+                        Tu guía de entretenimiento audiovisual. Recomendaciones inteligentes de cine, series, lanzamientos y dónde ver tu contenido preferido.
+                    </p>
+                </div>
+
+                <!-- Footer / Action Link -->
+                <div class="pt-4 border-t border-gray-100 flex items-center justify-between mt-auto">
+                    <button onclick="openPreviewModal('PalomitaPlus', 'Entretenimiento / Cine & Series', 'Encuentra qué ver hoy. Catálogo actualizado de películas y series con sinopsis, puntuaciones de la crítica y guía de disponibilidad en streaming.', './PalomitaPlus/')" 
+                            class="text-xs font-semibold text-apple-secondary hover:text-apple-text apple-transition flex items-center space-x-1.5">
+                        <i class="fa-regular fa-eye"></i>
+                        <span>Vista previa</span>
+                    </button>
+
+                    <a href="./PalomitaPlus/" class="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-apple-pill bg-gray-100 group-hover:bg-purple-600 group-hover:text-white text-xs font-semibold text-apple-text apple-transition">
+                        <span>Explorar</span>
+                        <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                    </a>
+                </div>
+            </article>
+
+        </section>
+
+        <!-- No Results Fallback -->
+        <div id="noResults" class="hidden text-center py-16 bg-white/70 border border-apple-border rounded-apple-lg shadow-apple-sm mt-6">
+            <div class="w-12 h-12 rounded-full bg-gray-100 mx-auto flex items-center justify-center text-apple-secondary mb-3">
+                <i class="fa-solid fa-magnifying-glass text-lg"></i>
+            </div>
+            <p class="text-base font-bold font-heading text-apple-text">No se encontraron proyectos</p>
+            <p class="text-xs text-apple-secondary mt-1">Intenta con otra palabra clave o selecciona otra categoría.</p>
+        </div>
+    </main>
+
+    <!-- Modal for Project Preview -->
+    <div id="previewModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/25 backdrop-blur-md opacity-0 pointer-events-none apple-transition">
+        <div class="bg-white rounded-apple-lg border border-apple-border max-w-lg w-full p-8 shadow-apple-modal transform scale-95 apple-transition" id="modalContainer">
+            <div class="flex justify-between items-start mb-4">
+                <div>
+                    <span id="modalCategory" class="text-[11px] font-bold tracking-wide uppercase text-apple-accent bg-blue-50 border border-blue-100 px-3 py-1 rounded-apple-pill"></span>
+                    <h3 id="modalTitle" class="text-2xl font-bold font-heading text-apple-text mt-3"></h3>
+                </div>
+                <button onclick="closePreviewModal()" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 text-apple-secondary hover:text-apple-text flex items-center justify-center apple-transition">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+            </div>
+            <p id="modalDescription" class="text-sm text-apple-secondary leading-relaxed mb-6 font-medium"></p>
+            
+            <div class="flex items-center justify-end space-x-3 pt-4 border-t border-gray-100">
+                <button onclick="closePreviewModal()" class="px-4 py-2 rounded-apple-pill text-xs font-semibold text-apple-secondary hover:text-apple-text apple-transition">
+                    Cerrar
+                </button>
+                <a id="modalLaunchBtn" href="#" class="px-5 py-2.5 rounded-apple-pill text-xs font-semibold bg-apple-accent text-white hover:bg-apple-accentHover shadow-sm apple-transition flex items-center space-x-2">
+                    <span>Abrir Proyecto</span>
+                    <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Apple-inspired Footer -->
+    <footer class="relative z-10 border-t border-apple-border bg-white/70 backdrop-blur-sm py-8 mt-16">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between text-xs text-apple-secondary space-y-4 md:space-y-0 font-medium">
+            <!-- Footer Hosting & Code Info -->
+            <div class="flex items-center space-x-1.5">
+                <span>Alojado con</span>
+                <i class="fa-solid fa-heart text-red-500 text-[10px]"></i>
+                <span>en <a href="https://vercel.com" target="_blank" class="text-apple-text hover:underline font-semibold">Vercel</a></span>
+                <span class="text-gray-300">|</span>
+                <span>Código en <a href="https://github.com/frantdse/DivertidoPaTodos" target="_blank" class="text-apple-text hover:underline font-semibold">GitHub</a></span>
+            </div>
+
+            <!-- Copyright -->
+            <div class="text-center md:text-right">
+                <p>&copy; <span id="year"></span> DivertidoPaTodos. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Interactive Logic -->
+    <script>
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        const filterTabs = document.querySelectorAll('.filter-tab');
+        const projectCards = document.querySelectorAll('.project-card');
+        const searchInput = document.getElementById('searchInput');
+        const clearSearchBtn = document.getElementById('clearSearch');
+        const noResults = document.getElementById('noResults');
+
+        let currentCategory = 'Todos';
+
+        function filterProjects() {
+            const query = searchInput.value.toLowerCase().trim();
+            let visibleCount = 0;
+
+            projectCards.forEach(card => {
+                const category = card.getAttribute('data-category');
+                const titleData = card.getAttribute('data-title').toLowerCase();
+
+                const matchesCategory = (currentCategory === 'Todos' || category === currentCategory);
+                const matchesSearch = titleData.includes(query);
+
+                if (matchesCategory && matchesSearch) {
+                    card.classList.remove('hidden');
+                    visibleCount++;
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+
+            if (visibleCount === 0) {
+                noResults.classList.remove('hidden');
+            } else {
+                noResults.classList.add('hidden');
+            }
+        }
+
+        filterTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                filterTabs.forEach(t => {
+                    t.classList.remove('active', 'bg-apple-text', 'text-white', 'shadow-sm');
+                    t.classList.add('bg-white', 'text-apple-secondary', 'border', 'border-apple-border');
+                });
+
+                tab.classList.add('active', 'bg-apple-text', 'text-white', 'shadow-sm');
+                tab.classList.remove('bg-white', 'text-apple-secondary', 'border-apple-border');
+
+                currentCategory = tab.getAttribute('data-category');
+                filterProjects();
+            });
+        });
+
+        searchInput.addEventListener('input', (e) => {
+            if (e.target.value.length > 0) {
+                clearSearchBtn.classList.remove('hidden');
+            } else {
+                clearSearchBtn.classList.add('hidden');
+            }
+            filterProjects();
+        });
+
+        clearSearchBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            clearSearchBtn.classList.add('hidden');
+            filterProjects();
+        });
+
+        // Modal Logic
+        const previewModal = document.getElementById('previewModal');
+        const modalContainer = document.getElementById('modalContainer');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalCategory = document.getElementById('modalCategory');
+        const modalDescription = document.getElementById('modalDescription');
+        const modalLaunchBtn = document.getElementById('modalLaunchBtn');
+
+        function openPreviewModal(title, category, description, href) {
+            modalTitle.textContent = title;
+            modalCategory.textContent = category;
+            modalDescription.textContent = description;
+            modalLaunchBtn.href = href;
+
+            previewModal.classList.remove('opacity-0', 'pointer-events-none');
+            modalContainer.classList.remove('scale-95');
+            modalContainer.classList.add('scale-100');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closePreviewModal() {
+            previewModal.classList.add('opacity-0', 'pointer-events-none');
+            modalContainer.classList.remove('scale-100');
+            modalContainer.classList.add('scale-95');
+            document.body.style.overflow = 'auto';
+        }
+
+        previewModal.addEventListener('click', (e) => {
+            if (e.target === previewModal) {
+                closePreviewModal();
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closePreviewModal();
+            }
+        });
+    </script>
+</body>
+</html>
